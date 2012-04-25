@@ -1,0 +1,9 @@
+import(utils)
+
+export(
+       mams,
+       MAMSNews,
+       plot.MAMS,
+       print.MAMS,
+       summary.MAMS
+      )

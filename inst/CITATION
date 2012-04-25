@@ -1,0 +1,16 @@
+citHeader("To cite package MAMS in publications use:")
+
+citEntry(entry="Article",
+         title = "A generalized Dunnett test for multi-arm multi-stage clinical studies with treatment selection",
+         author = personList(person(given="Dominic", family="Magirr"), person(given="Thomas", family="Jaki"),
+			person(given="John", family="Whitehead")),
+         year = "2012",
+         journal = "Biometrika",
+         volume = "",
+         number = "",
+         pages = "",
+         note = "Published online ahead of print",
+         url = "http://CRAN.R-project.org/package=MAMS",         
+         textVersion = paste("Magirr D, Jaki T, Whitehead J (2012) A generalized Dunnett Test for Multiarm-Multistage Clinical Studies with Treatment Selection. Biometrika. Published online ahead of print.")
+         )
+
