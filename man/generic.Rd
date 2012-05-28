@@ -2,6 +2,9 @@
 \alias{plot.MAMS}
 \alias{print.MAMS}
 \alias{summary.MAMS}
+\alias{print.MAMS.sim}
+\alias{summary.MAMS.sim}
+
 \title{Different generic functions for class MAMS.}
 \description{Generic functions for summarizing an object of class PK}
 \usage{
@@ -11,6 +14,10 @@
 
 \method{plot}{MAMS}(x, col=NULL, pch=NULL, lty=NULL, main=NULL, xlab="Analysis", 
      ylab="Test statistic", ylim=NULL, type=NULL, \dots)
+
+\method{print}{MAMS.sim}(x, digits=max(3, getOption("digits") - 4), \dots)
+
+\method{summary}{MAMS.sim}(object, digits=max(3, getOption("digits") - 4), \dots)
 
 }
 
@@ -30,17 +37,22 @@
 }
 
 \details{
-  \code{print.MAMS} produces a minimal summary of an estimation object from class PK including point estimate, standard error and confidence interval. The confidence interval is the first of \code{"boott"}, \code{"fieller"}, \code{"t"} or \code{"z"} that was originally requested. \cr\cr
+  \code{print.MAMS} produces a summary of an object from class MAMS including boundaries and requires sample size if initially requested.\cr
 
-  \code{summary.MAMS} prints a more detailed summary of an estimation object from class PK. Most notably all confidence intervals originally requested are printed.\cr\cr
+  \code{summary.MAMS} produces same output as \code{print.MAMS}.\cr
 
-  \code{plot.MAMS} produces as concentration versus time plot of the data used of an estimation object from class PK.
+  \code{plot.MAMS} produces as plot of the boundaries.
+
+  \code{print.MAMS.sim} produces a summary of an object from class MAMS.sim including type-I-error and expected sample size.\cr
+
+  \code{summary.MAMS.sim} produces same output as \code{print.MAMS.sim}.\cr
+
 }
 
 \value{Screen or graphics output.}
 
 \references{
-Magirr D, Jaki T, Whitehead J (2012) A generalized Dunnett Test for Multi-arm Multi-stage Clinical Studies with Treatment Selection. Biometrika. Published online ahead of print.\cr
+Magirr D, Jaki T, Whitehead J (2012) A generalized Dunnett Test for Multi-arm Multi-stage Clinical Studies with Treatment Selection. Biometrika. 99(2):494-501.\cr
 }
 
 \author{Thomas Jaki}
@@ -55,6 +67,11 @@ print(res)
 summary(res)
 plot(res)
 }
+res <- mams.sim(nsim=10000,nMat=matrix(c(44,88),nrow=2,ncol=5),u=c(3.068,2.169),
+                l=c(0.000,2.169),pv=c(0.65,0.55,0.55,0.55),ptest=c(1:2,4))
+
+print(res)
+
 }
 
 \keyword{classes}

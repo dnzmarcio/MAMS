@@ -2,8 +2,12 @@ import(utils)
 
 export(
        mams,
+       mams.sim,
        MAMSNews,
+       new.bounds,
        plot.MAMS,
        print.MAMS,
-       summary.MAMS
+       print.MAMS.sim,
+       summary.MAMS,
+       summary.MAMS.sim
       )

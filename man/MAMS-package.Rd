@@ -12,8 +12,8 @@ A package to design multi-arm multi-stage clinical studies with J stages and K t
 \tabular{ll}{
 Package: \tab MAMS\cr
 Type: \tab Package\cr
-Version: \tab 1.0\cr
-Date: \tab 2012-04-23\cr
+Version: \tab 0.2\cr
+Date: \tab 2012-05-28\cr
 License: \tab GPL-2 \cr
 }
 
@@ -25,7 +25,7 @@ Maintainer: Thomas Jaki <jaki.thomas@gmail.com>
 
 }
 \references{
-Magirr D, Jaki T, Whitehead J (2012) A generalized Dunnett Test for Multi-arm Multi-stage Clinical Studies with Treatment Selection. Biometrika. Published Online ahead of print.
+Magirr D, Jaki T, Whitehead J (2012) A generalized Dunnett Test for Multi-arm Multi-stage Clinical Studies with Treatment Selection. Biometrika. 99(2):494-501.
 }
 \keyword{ package }
 \examples{

@@ -1,4 +1,4 @@
-mams <- function(K=4, J=2, alpha=0.05, power=0.9, r=1:2, r0=1:2, p=0.75 , p0=0.5, u.shape="obf", l.shape="fixed", lfix=0, ufix=NULL, nstart=1, N=20){
+mams <- function(K=4, J=2, alpha=0.05, power=0.9, r=1:2, r0=1:2, p=0.75 , p0=0.5, u.shape="obf", l.shape="fixed", lfix=0, ufix=NULL, nstart=1, sample.size=TRUE, N=20){
 
 
   #require(mvtnorm) ## the function pmvnorm is required to evaluate multivariate normal probabilities
@@ -281,24 +281,32 @@ mams <- function(K=4, J=2, alpha=0.05, power=0.9, r=1:2, r0=1:2, p=0.75 , p0=0.5
   ####################################################################################################
   
   pow<-0
-
-  while (pow==0){
-    n<-n+1
-    pow<-(typeII(n,beta=1-power,l=l,u=u,N=N,r=r,r0=r0,r0diff=r0diff,J=J,K=K,delta=delta,delta0=delta0,sig=sig,Sigma=Sigma)<0)
+  if(sample.size){
+    while (pow==0){
+      n<-n+1
+      pow<-(typeII(n,beta=1-power,l=l,u=u,N=N,r=r,r0=r0,r0diff=r0diff,J=J,K=K,delta=delta,delta0=delta0,sig=sig,Sigma=Sigma)<0)
+    }
+  }else{
+    n <- NULL
   }  
 
   res <- NULL
   res$l <- l  
   res$u <- u
   res$n <- n
-  res$N <- K*r[J]*n+r0[J]*n ## maximum total sample size
+
+  res$rMat <- rbind(r0,matrix(r,ncol=J,nrow=K,byrow=TRUE)) ## allocation ratios
+  res$N <- sum(res$rMat[,J]*res$n) ## maximum total sample sizeres$N <- K*r[J]*n+r0[J]*n ## maximum total sample size
 
   res$K <- K
   res$J <- J
   res$alpha <- alpha
-  res$power <- power
+  if(sample.size){
+    res$power <- power
+  }else{
+    res$power <- NA
+  }
 
-  res$rMat <- rbind(r0,r) ## allocation ratios
   class(res)<-"MAMS"
 
   return(res)

@@ -11,7 +11,7 @@ The function determines the boundaries of a multi-arm multi-stage study for a gi
 
 \usage{
 mams(K=4, J=2, alpha=0.05, power=0.9, r=1:2, r0=1:2, p=0.75 , p0=0.5, u.shape="obf", 
-     l.shape="fixed", lfix=0, ufix=NULL, nstart=1, N=20)
+     l.shape="fixed", lfix=0, ufix=NULL, nstart=1, sample.size=TRUE, N=20)
 }
 
 \arguments{
@@ -25,9 +25,10 @@ mams(K=4, J=2, alpha=0.05, power=0.9, r=1:2, r0=1:2, p=0.75 , p0=0.5, u.shape="o
   \item{p0}{ Uninteresting treatment effect. See Details. (default=0.5).}
   \item{u.shape}{ Shape of upper boundary. Either a function specifying the shape or one of \code{"pocock"}, \code{"obf"} (the default), \code{"triangular"} and \code{"fixed"}. See details.}
   \item{l.shape}{ Shape of lower boundary. Either a function specifying the shape or one of \code{"pocock"}, \code{"obf"} (the default), \code{"triangular"} and \code{"fixed"}. See details.}
-  \item{nstart}{ Starting point for finding the sample size (default=1).}
   \item{lfix}{ Fixed lower boundary (default=NULL). Only used if \code{shape="fixed"}.}
   \item{ufix}{ Fixed upper boundary (default=NULL). Only used if \code{shape="fixed"}.}
+  \item{nstart}{ Starting point for finding the sample size (default=1).}
+  \item{sample.size}{ Logical if sample size should be found as well (default=TRUE). }
   \item{N}{ Number of quadrature points per dimension in the outer integral (default=20).}
 }
 
@@ -37,6 +38,8 @@ This function finds the boundaries and sample size of a multi-arm multi-stage st
 The design is found under the least favorable configuration which requires an interesting treatment effect \code{p} that if present we would like to find with high probability and an uninteresting effect \code{p0}. Both \code{p} and \code{p0} are parameterized as \eqn{P(X_k > X_0 ) = p}{P(X_k > X_0 ) = p}, that is the probability of a randomly selected person on treatment k observing a better outcome than a random person on control. For \code{p=0.5} the experimental treatment and control perform equally well. The advantage of this paramterization is that no knowledge about the variance is required. To convert traditional effect sizes, \eqn{\delta}{delta} to this format use \eqn{p=\Phi(\frac{\delta}{\sqrt{2}\sigma})}{Phi(delta/(2^0.5*sigma))}.\cr
 
 The shape of the boundaries (\code{u.shape}, \code{l.shape}) are either using the predefined shapes following Pocock (1977), O'Brien & Fleming (1979) or the triangular Test (Whitehead, 1997) using options \code{"pocock"}, \code{"obf"} or \code{"triangular"} respectively, are constant (option \code{"fixed"}) or supplied in as a function. If a function is passed it should require exactly one argument specifying the number of stages and return a vector of the same length. The lower boundary shape is required to be non-decreasing while the upper boundary shape needs to be non-increasing. If a fixed lower boundary is used, \code{lfix} must be smaller than \eqn{\Phi^{-1}(1-\alpha)/2}{Phi(1-alpha)/2} to ensure that it is smaller than the upper boundary.\cr
+
+Computation of designs with more than four stages are very time consuming and not advised. The parameter \code{sample.size} controls whether the required sample size is computed as well. Setting to \code{FALSE} approximately halves the compuation time.\cr
 }
 
 \value{
@@ -50,12 +53,12 @@ An object of the class MAMS containing the following components: \cr
   \item{alpha}{Familywise error rate.}
   \item{power}{Power under least favorable configuration.}
 
-  \item{rMat}{Matrix of allocation ratios. First row corresponds to control and second row to experimental treatments.}
+  \item{rMat}{Matrix of allocation ratios. First row corresponds to control while subsequent rows are for the experimental treatments.}
 
 }
 
 \references{
-Magirr D, Jaki T, Whitehead J (2012) A generalized Dunnett Test for Multi-arm Multi-stage Clinical Studies with Treatment Selection. Biometrika. Published online ahead of print.\cr
+Magirr D, Jaki T, Whitehead J (2012) A generalized Dunnett Test for Multi-arm Multi-stage Clinical Studies with Treatment Selection. Biometrika. 99(2):494-501.\cr
 
 Pocock SJ (1977) Group sequential methods in the design and analysis of clinical trials. Biometrika 64, 191-199.\cr
 
@@ -79,14 +82,15 @@ mams(K=4, J=1, alpha=0.05, power=0.9, r=1, r0=1, p=0.65 , p0=0.55)
 mams(K=4, J=2, alpha=0.05, power=0.9, r=1:2, r0=1:2, p=0.65 , p0=0.55, u.shape="obf", 
      l.shape="fixed", lfix=0, nstart=40)
 
-\donttest{
+\donttest{ ## no checking of example in R CMD check
 # 3-stage design with Triangular efficacy and futility boundary
 mams(K=4, J=3, alpha=0.05, power=0.9, r=1:3, r0=1:3, p=0.65 , p0=0.55, u.shape="triangular", 
      l.shape="triangular", nstart=30)
 
-## Example of a custom boundary function
+
+## Example of a custom boundary function without sample size evaluation
 mams(K=6, J=3, alpha=0.05, power=0.9, r=1:3, r0=1:3, p=0.7 , p0=0.5, u.shape=function(x)return(x:1), 
-     l.shape="fixed", lfix=0, nstart=10)
+     l.shape="fixed", lfix=0, sample.size=FALSE)
 }
 
 ## Different allocation ratios between control and experimental treatments. 
