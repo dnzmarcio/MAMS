@@ -64,9 +64,10 @@ Magirr D, Jaki T, Whitehead J (2012) A generalized Dunnett Test for Multi-arm Mu
 #### Note that some of these examples may take a few minutes to run
 ######
 
-# 2-stage design with O'Brien & Fleming efficacy and zero futility boundary with equal sample size 
-# per arm and stage. Design can be found using
-# mams(K=4, J=2, alpha=0.05, power=0.9, r=1:2, r0=1:2, u.shape="obf", l.shape="fixed", lfix=0, p=0.65, p0=0.55)
+# 2-stage design with O'Brien & Fleming efficacy and zero futility boundary with 
+# equal sample size per arm and stage. Design can be found using
+# mams(K=4, J=2, alpha=0.05, power=0.9, r=1:2, r0=1:2, u.shape="obf", l.shape="fixed", 
+#      lfix=0, p=0.65, p0=0.55)
 
 # under global null hypothesis
 mams.sim(nsim=10000,nMat=matrix(c(44,88),nrow=2,ncol=5),u=c(3.068,2.169),

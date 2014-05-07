@@ -4,9 +4,13 @@
 \alias{summary.MAMS}
 \alias{print.MAMS.sim}
 \alias{summary.MAMS.sim}
+\alias{print.MAMS.step_down}
+\alias{summary.MAMS.step_down}
+\alias{plot.MAMS.step_down}
+
 
 \title{Different generic functions for class MAMS.}
-\description{Generic functions for summarizing an object of class PK}
+\description{Generic functions for summarizing an object of class MAMS.}
 \usage{
 \method{print}{MAMS}(x, digits=max(3, getOption("digits") - 4), \dots)
 
@@ -18,6 +22,14 @@
 \method{print}{MAMS.sim}(x, digits=max(3, getOption("digits") - 4), \dots)
 
 \method{summary}{MAMS.sim}(object, digits=max(3, getOption("digits") - 4), \dots)
+
+\method{print}{MAMS.step_down}(x, digits=max(3, getOption("digits") - 4), ...)
+
+\method{summary}{MAMS.step_down}(object, digits=max(3, getOption("digits") - 4), \dots)
+
+\method{plot}{MAMS.step_down}(x, col=NULL, pch=NULL, lty=NULL, main=NULL, xlab="Analysis", 
+     ylab="Test statistic", ylim=NULL, type=NULL, \dots)
+
 
 }
 
@@ -47,21 +59,32 @@
 
   \code{summary.MAMS.sim} produces same output as \code{print.MAMS.sim}.\cr
 
+  \code{print.MAMS.step_down} produces a summary of an object from class MAMS including boundaries and requires sample size if initially requested.\cr
+
+  \code{summary.MAMS.step_down} produces same output as \code{print.step_down_mams}.\cr
+
+  \code{plot.MAMS.step_down} produces a plot of the boundaries.
+
 }
 
 \value{Screen or graphics output.}
 
 \references{
 Magirr D, Jaki T, Whitehead J (2012) A generalized Dunnett Test for Multi-arm Multi-stage Clinical Studies with Treatment Selection. Biometrika. 99(2):494-501.\cr
+
+
+Stallard N, Todd S (2003) Sequential designs for phase III clinical trials incorporating treatment selection. Statistics in Medicine. 22, 689-703. \cr
+
+Magirr D, Stallard N, Jaki T (2014) Flexible sequential designs for multi-arm clinical trials. Statistics in Medicine. Published online. 
 }
 
-\author{Thomas Jaki}
+\author{Thomas Jaki and Dominic Magirr}
 
 \examples{
 \donttest{
 # 3-stage design with triangular boundaries
-res <- mams(K=4, J=3, alpha=0.05, power=0.9, r=1:3, r0=1:3, p=0.65 , p0=0.55, u.shape="triangular", 
-            l.shape="triangular", nstart=30)
+res <- mams(K=4, J=3, alpha=0.05, power=0.9, r=1:3, r0=1:3, p=0.65 , p0=0.55, 
+            u.shape="triangular", l.shape="triangular", nstart=30)
 
 print(res)
 summary(res)
@@ -72,6 +95,19 @@ res <- mams.sim(nsim=10000,nMat=matrix(c(44,88),nrow=2,ncol=5),u=c(3.068,2.169),
 
 print(res)
 
+# 2-stage 3-treatments versus control design, all promising treatments are selected:
+res <- step_down_mams(nMat = matrix(c(10, 20), nrow = 2, ncol = 4), 
+                      alpha_star = c(0.01, 0.05), lb = 0, 
+                      selection = "all_promising")
+
+print(res)
+summary(res)
+plot(res)
+
+
 }
+
+
+
 
 \keyword{classes}

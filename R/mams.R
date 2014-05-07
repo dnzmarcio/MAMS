@@ -267,6 +267,19 @@ mams <- function(K=4, J=2, alpha=0.05, power=0.9, r=1:2, r0=1:2, p=0.75 , p0=0.5
   }
 
 
+  #########################################################
+  ## Find alpha_star
+  #########################################################
+  alpha_star <- numeric(J)
+  alpha_star[1] <- typeI(u[1], alpha = 0, N = N, r = r[1], r0 = r0[1], r0diff = r0diff[1], J = 1, K = K, Sigma = Sigma, u.shape = "fixed", l.shape = "fixed", lfix = NULL, ufix = NULL)
+  if (J > 1){
+      for (j in 2:J){
+          alpha_star[j] <- typeI(u[j], alpha = 0, N = N, r = r[1:j], r0 = r0[1:j], r0diff = r0diff[1:j], J = j, K = K, Sigma = Sigma, u.shape = "fixed", l.shape = "fixed", lfix = l[1:(j - 1)], ufix = u[1:(j - 1)])
+      }
+  }
+
+
+  
   #############################################################
   ##  Now find samplesize for arm 1 stage 1 (n)  using 'typeII'.
   ##  Sample sizes for all stages are then determined by
@@ -301,6 +314,7 @@ mams <- function(K=4, J=2, alpha=0.05, power=0.9, r=1:2, r0=1:2, p=0.75 , p0=0.5
   res$K <- K
   res$J <- J
   res$alpha <- alpha
+  res$alpha_star <- alpha_star
   if(sample.size){
     res$power <- power
   }else{

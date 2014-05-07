@@ -72,7 +72,7 @@ new.bounds <- function(K=3, J=2, alpha=0.05, nMat=matrix(c(10,20),nrow=2,ncol=4)
         ub<-c(u,rep(C,Jleft))
       }
       else if (u.shape=='fixed'){
-        ub<-c(u,rep(ufix,Jleft),C)
+        ub<-c(u,rep(ufix,Jleft-1),C)
       } 
       else if (u.shape=='triangular') {
         ub<-c(u,C*(1+(1:J)/J)/sqrt(1:J)[(j+1):J])
@@ -208,6 +208,21 @@ new.bounds <- function(K=3, J=2, alpha=0.05, nMat=matrix(c(10,20),nrow=2,ncol=4)
     lb <- c(l,uJ*l.shape(J)[(j+1):(J-1)],ub[J])
   }
 
+
+  
+  #########################################################
+  ## Find alpha_star
+  #########################################################
+  alpha_star <- numeric(J)
+  alpha_star[1] <- typeI(ub[1], alpha = 0, N = N, R = t(as.matrix(R[1,])), r0 = r0[1], r0diff = r0diff[1], J = 1, K = K, Sigma = Sigma, u = NULL, l = NULL, u.shape = "fixed", l.shape = "fixed", lfix = NULL, ufix = NULL)
+  if (J > 1){
+      for (j in 2:J){
+          alpha_star[j] <- typeI(ub[j], alpha = 0, N = N, R = R[1:j,], r0 = r0[1:j], r0diff = r0diff[1:j], J = j, K = K, Sigma = Sigma, u = NULL, l = NULL, u.shape = "fixed", l.shape = "fixed", lfix = lb[1:(j - 1)], ufix = ub[1:(j - 1)])
+      }
+  }
+
+  
+
   res <- NULL
   res$l <- lb  
   res$u <- ub
@@ -218,6 +233,7 @@ new.bounds <- function(K=3, J=2, alpha=0.05, nMat=matrix(c(10,20),nrow=2,ncol=4)
   res$K <- K
   res$J <- J
   res$alpha <- alpha
+  res$alpha_star <- alpha_star
   res$power <- NA
 
   

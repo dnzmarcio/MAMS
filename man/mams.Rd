@@ -10,8 +10,9 @@ The function determines the boundaries of a multi-arm multi-stage study for a gi
 }
 
 \usage{
-mams(K=4, J=2, alpha=0.05, power=0.9, r=1:2, r0=1:2, p=0.75 , p0=0.5, u.shape="obf", 
-     l.shape="fixed", lfix=0, ufix=NULL, nstart=1, sample.size=TRUE, N=20)
+mams(K=4, J=2, alpha=0.05, power=0.9, r=1:2, r0=1:2, p=0.75 , p0=0.5, 
+     u.shape="obf", l.shape="fixed", lfix=0, ufix=NULL, nstart=1, 
+     sample.size=TRUE, N=20)
 }
 
 \arguments{
@@ -51,6 +52,7 @@ An object of the class MAMS containing the following components: \cr
   \item{K}{Number of experimental treatments.}
   \item{J}{Number of stages in the trial. }
   \item{alpha}{Familywise error rate.}
+  \item{alpha_star}{Cumulative familywise error rate spent by each analysis.}
   \item{power}{Power under least favorable configuration.}
 
   \item{rMat}{Matrix of allocation ratios. First row corresponds to control while subsequent rows are for the experimental treatments.}
@@ -79,24 +81,26 @@ mams(K=4, J=1, alpha=0.05, power=0.9, r=1, r0=1, p=0.65 , p0=0.55)
 
 ## Two examples in Table 1 of Magirr et al (2012)
 # 2-stage design with O'Brien & Fleming efficacy and zero futility boundary
-mams(K=4, J=2, alpha=0.05, power=0.9, r=1:2, r0=1:2, p=0.65 , p0=0.55, u.shape="obf", 
-     l.shape="fixed", lfix=0, nstart=40)
+mams(K=4, J=2, alpha=0.05, power=0.9, r=1:2, r0=1:2, p=0.65 , p0=0.55, 
+     u.shape="obf", l.shape="fixed", lfix=0, nstart=40)
 
-\donttest{ ## no checking of example in R CMD check
+\donttest{
 # 3-stage design with Triangular efficacy and futility boundary
-mams(K=4, J=3, alpha=0.05, power=0.9, r=1:3, r0=1:3, p=0.65 , p0=0.55, u.shape="triangular", 
-     l.shape="triangular", nstart=30)
+mams(K=4, J=3, alpha=0.05, power=0.9, r=1:3, r0=1:3, p=0.65 , p0=0.55, 
+     u.shape="triangular", l.shape="triangular", nstart=30)
 
 
 ## Example of a custom boundary function without sample size evaluation
-mams(K=6, J=3, alpha=0.05, power=0.9, r=1:3, r0=1:3, p=0.7 , p0=0.5, u.shape=function(x)return(x:1), 
-     l.shape="fixed", lfix=0, sample.size=FALSE)
-}
+mams(K=6, J=3, alpha=0.05, power=0.9, r=1:3, r0=1:3, p=0.7 , p0=0.5, 
+     u.shape=function(x)return(x:1), l.shape="fixed", lfix=0, 
+     sample.size=FALSE)
+
 
 ## Different allocation ratios between control and experimental treatments. 
 ## Twice as many patients are randomized to control at each stage.
-mams(K=4, J=2, alpha=0.05, power=0.9, r=1:2, r0=c(2,4), p=0.65 , p0=0.55, u.shape="obf", 
-     l.shape="fixed", lfix=0, nstart=30)
+mams(K=4, J=2, alpha=0.05, power=0.9, r=1:2, r0=c(2,4), p=0.65 , p0=0.55, 
+     u.shape="obf", l.shape="fixed", lfix=0, nstart=30)
+}
 }
 
 \keyword{ design }

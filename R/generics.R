@@ -105,3 +105,120 @@ summary.MAMS.sim<-function(object, digits=max(3, getOption("digits") - 4), ...){
   print(object)
 
 }
+
+
+
+print.MAMS.step_down<- function (x, digits=max(3, getOption("digits") - 4), ...) {
+
+    get.hyp <- function(n){ # find the nth intersection hypothesis (positions of 1s in binary n)
+        indlength = ceiling(log(n)/log(2)+.0000001)
+        ind = rep(0,indlength)
+        newn=n
+        
+        for (h in seq(1,indlength)){
+            ind[h] = (newn/(2^(h-1))) %% 2
+            newn = newn - ind[h]*2^(h-1)
+        }
+        seq(1,indlength)[ind==1]
+    }
+    
+    cat(paste("Design parameters for a ", x$J, " stage trial with ", x$K, " treatments\n\n",sep=""))
+    res <- t(x$sample_sizes)
+    colnames(res)<-paste("Stage",1:x$J)
+    rownames(res) <- c("Cumulative sample size  (control):", paste("Cumulative sample size per stage (treatment ", 1:x$K, "):"))
+
+    print(res)
+    cat(paste("\nMaximum total sample size: ", sum(x$sample_sizes[x$J,]),"\n\n"))
+
+    for (i in 1:length(x$l)){
+
+        cat(paste("\nIntersection hypothesis H_{", paste(get.hyp(i), collapse = " "), "}:","\n\n"))
+        
+        res <- matrix(NA,nrow=3,ncol=x$J)
+        colnames(res)<-paste("Stage",1:x$J)
+        rownames(res) <- c("Conditional error", "Upper boundary", "Lower boundary")
+        res[1,] <- x$alpha_star[[i]]
+        res[2,] <- x$u[[i]]
+        res[3,] <- x$l[[i]]
+  
+        print(res)
+
+    }
+}
+
+
+summary.MAMS.step_down<-function(object, digits=max(3, getOption("digits") - 4), ...){
+
+  print(object)
+
+}
+             
+
+plot.MAMS.step_down <- function (x, col=NULL, pch=NULL, lty=NULL, main=NULL, xlab="Analysis", ylab="Test statistic", ylim=NULL, type=NULL, ...) {
+
+    get.hyp <- function(n){ # find the nth intersection hypothesis (positions of 1s in binary n)
+        indlength = ceiling(log(n)/log(2)+.0000001)
+        ind = rep(0,indlength)
+        newn=n
+        
+        for (h in seq(1,indlength)){
+            ind[h] = (newn/(2^(h-1))) %% 2
+            newn = newn - ind[h]*2^(h-1)
+        }
+        seq(1,indlength)[ind==1]
+    }
+    
+    if(is.null(type))type<-"p"
+    if(is.null(pch))pch<-1
+    if(is.null(col))col<-1:length(x$l)
+    if(is.null(lty))lty<-2
+    if(is.null(ylim)){
+
+        l_min <- min(unlist(lapply(x$l, function(a) min(a[(a!=Inf)&(a!=-Inf)]))))
+        if (!is.null(x$z_scores)) l_min <- min(l_min, min(unlist(x$z_scores)[unlist(x$z_scores) != -Inf]))
+        u_max <- max(unlist(lapply(x$u, function(a) max(a[(a!=Inf)&(a!=-Inf)]))))
+        r <- u_max - l_min
+        ylim <- c(l_min - r/6, u_max + r/6)
+        
+    }
+    
+    matplot(1:x$J, cbind(x$l[[1]], x$u[[1]]), type=type, pch=pch, col = 0, ylab=ylab, xlab=xlab, ylim=ylim, axes=FALSE, ...)
+    mtext(1:x$J,side=1,at=1:x$J)
+    #  axis(side=2)
+    axis(side=2,at=seq(-10,10,1))
+    lines(x$u[[1]],lty=lty)
+    lines(x$l[[1]][1:(x$J)],lty=lty)
+
+    completed_stages <- length(x$z_scores)
+    if (completed_stages > 0){
+        for (i in 1:completed_stages){
+            for (k in 1:x$K){
+                points(i, x$z_scores[[i]][k], col = 2 ^ (k - 1), pch = 3)
+            }
+        }
+    }
+        
+
+    
+    legend_text <- NULL
+    legend_col <- NULL
+
+    if (length(col) < length(x$l)) col <- rep(col, length(x$l))
+    
+    for (i in 1:length(x$l)){
+        legend_text <- c(legend_text, paste("H_{", paste(get.hyp(i), collapse = " "), "}"))
+        legend_col <- c(legend_col, i)
+        if ((x$alpha_star[[i]][x$J] > 0) && (x$alpha_star[[i]][x$J] < 1)){
+            
+            matpoints(1:x$J, cbind(x$l[[i]], x$u[[i]]), type=type, pch=pch, col=col[i], ylab=ylab, xlab=xlab, ylim=ylim, axes=FALSE, ...)
+           
+            lines(x$u[[i]],lty=lty, col = col[i])
+            lines(x$l[[i]][1:(x$J)],lty=lty, col=col[i])
+        }
+        
+      
+        
+    }
+
+    legend("bottomright", legend = legend_text, lty = lty, col = legend_col)
+}

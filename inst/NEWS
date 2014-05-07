@@ -12,6 +12,13 @@ Question or suggestions about the package can be send to
    jaki.thomas@gmail.com
 
 --------------------CHANGE LOG--------------------------------------------
+Version 0.3
+
+  o New function (step_down_mams) to calculate stopping boundaries for all intersection hypothesis tests in a closed testing procedure.
+  o New function (update_mams) to update boundaries at an interim analysis to take account of unplanned treatment selection and/or sample size reestimation.
+  o Documentation updated
+
+--------------------------------------------------------------------------
 Version 0.2
 
   o New function (mams.sim) to simulate mams studies included

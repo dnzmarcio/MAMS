@@ -1,13 +1,19 @@
 import(utils)
+import(mvtnorm)
 
 export(
        mams,
        mams.sim,
        MAMSNews,
        new.bounds,
+       step_down_mams,
+       update_mams,
        plot.MAMS,
+       plot.MAMS.step_down,
        print.MAMS,
        print.MAMS.sim,
+       print.MAMS.step_down,
        summary.MAMS,
-       summary.MAMS.sim
+       summary.MAMS.sim,
+       summary.MAMS.step_down
       )
