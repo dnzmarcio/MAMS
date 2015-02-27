@@ -72,19 +72,17 @@ Whitehead J (1997) The Design and Analysis of Sequential Clinical Trials. Wiley:
 \author{Thomas Jaki and Dominic Magirr}
 
 \examples{
-######
-#### Note that some of these examples may take a few minutes to run
-######
 ## A fixed sample (single stage) design
 mams(K=4, J=1, alpha=0.05, power=0.9, r=1, r0=1, p=0.65 , p0=0.55)
 
 
-## Two examples in Table 1 of Magirr et al (2012)
+## An example in Table 1 of Magirr et al (2012)
 # 2-stage design with O'Brien & Fleming efficacy and zero futility boundary
 mams(K=4, J=2, alpha=0.05, power=0.9, r=1:2, r0=1:2, p=0.65 , p0=0.55, 
      u.shape="obf", l.shape="fixed", lfix=0, nstart=40)
 
-\donttest{
+\dontrun{
+# Note that these examples may take a few minutes to run
 # 3-stage design with Triangular efficacy and futility boundary
 mams(K=4, J=3, alpha=0.05, power=0.9, r=1:3, r0=1:3, p=0.65 , p0=0.55, 
      u.shape="triangular", l.shape="triangular", nstart=30)
@@ -101,6 +99,7 @@ mams(K=6, J=3, alpha=0.05, power=0.9, r=1:3, r0=1:3, p=0.7 , p0=0.5,
 mams(K=4, J=2, alpha=0.05, power=0.9, r=1:2, r0=c(2,4), p=0.65 , p0=0.55, 
      u.shape="obf", l.shape="fixed", lfix=0, nstart=30)
 }
+
 }
 
 \keyword{ design }

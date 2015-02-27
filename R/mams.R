@@ -81,7 +81,11 @@ mams <- function(K=4, J=2, alpha=0.05, power=0.9, r=1:2, r0=1:2, p=0.75 , p0=0.5
       else if (l.shape=='fixed'){
         l<-c(rep(lfix,J-1),u[J])
       } else if (l.shape=='triangular') {
-        l<--C*(1-3*r/r[J])/sqrt(r)
+        if(u.shape=="triangular"){
+          l<--C*(1-3*r/r[J])/sqrt(r)
+        }else{
+          l<--C*(1-3*r/r[J])/sqrt(r)/(-1*(1-3)/sqrt(J))
+        }
       }
     }else{
       l <- c(C*l.shape(J)[1:(J-1)],u[J])
@@ -260,7 +264,11 @@ mams <- function(K=4, J=2, alpha=0.05, power=0.9, r=1:2, r0=1:2, p=0.75 , p0=0.5
     else if (l.shape=='fixed'){
       l<-c(rep(lfix,J-1),u[J])
     } else if (l.shape=='triangular') {
-      l<--uJ*(1-3*r/r[J])/sqrt(r)
+       if(u.shape=="triangular"){
+          l<--uJ*(1-3*r/r[J])/sqrt(r)
+       }else{
+          l<--uJ*(1-3*r/r[J])/sqrt(r)/(-1*(1-3)/sqrt(J))
+       }
     }
   }else{
     l <- c(uJ*l.shape(J)[1:(J-1)],u[J])
