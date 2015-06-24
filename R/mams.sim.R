@@ -71,6 +71,7 @@ mams.sim <- function(nsim=1000,nMat=matrix(c(44,88),nrow=2,ncol=5),u=c(3.068,2.1
 
   r0 <- nMat[,1]/nMat[1,1]
   R <-  nMat[,-1]/nMat[1,1]
+  if(!is.matrix(R) && is.vector(R))  R <- t(as.matrix( nMat[, -1]/nMat[1, 1]))
 
   n <- nMat[1,1]
   deltas<-sqrt(2)*qnorm(pv)
