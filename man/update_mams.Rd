@@ -10,8 +10,8 @@ Function to update a planned multi-arm multi-stage design to account for unplann
 }
 
 \usage{
-update_mams(current_mams = step_down_mams(), n_obs = NULL, 
-            z_scores = NULL, selected_trts = NULL, n_future = NULL)
+update_mams(current_mams=step_down_mams(), n_obs=NULL, 
+            z_scores=NULL, selected_trts=NULL, n_future=NULL)
 }
 
 \arguments{
@@ -54,41 +54,39 @@ clinical trials. Statistics in Medicine. Published online. \cr
 
 # 2-stage 3-treatments versus control design
 # all promising treatments are selected:
-orig_mams <- step_down_mams(nMat = matrix(c(10, 20), nrow = 2, ncol = 4), 
-                            alpha_star = c(0.01, 0.05), lb = 0, 
-                            selection = "all_promising")
+orig_mams <- step_down_mams(nMat=matrix(c(10, 20), nrow=2, ncol=4), 
+                            alpha_star=c(0.01, 0.05), lb=0, 
+                            selection="all_promising")
 
 # make adjustment for the observed sample sizes 
 # not being exactly as planned:
-update_mams(orig_mams, n_obs = c(9, 8, 13, 11), z_scores = c(1.1, -0.5, 0.2), 
-            selected_trts = 1:3, n_future = NULL)
+update_mams(orig_mams, n_obs=c(9, 8, 13, 11), z_scores=c(1.1, -0.5, 0.2), 
+            selected_trts=1:3, n_future=NULL)
 
 # make adjustment for the observed sample sizes 
 # not being exactly as planned. In addition, drop treatment 2:
-update_mams(orig_mams, n_obs = c(9, 8, 13, 11), z_scores = c(1.1, -0.5, 0.2), 
-            selected_trts = c(1, 3), n_future = NULL)
+update_mams(orig_mams, n_obs=c(9, 8, 13, 11), z_scores=c(1.1, -0.5, 0.2), 
+            selected_trts=c(1, 3), n_future=NULL)
 
 # make adjustment for the observed sample sizes not being 
 # exactly as planned. In addition, drop treatment 2. In addition, 
 # double the planed cumulative second stage sample sizes:
 
-updated_mams1 <- update_mams(orig_mams, n_obs = c(9, 8, 13, 11), 
-                             z_scores = c(1.1, -0.5, 0.2), selected_trts =  c(1, 3), 
-                             n_future = matrix(c(40, 40, 13, 40), 1, 4))
-
+updated_mams1 <- update_mams(orig_mams, n_obs=c(9, 8, 13, 11), 
+                             z_scores=c(1.1, -0.5, 0.2), selected_trts=c(1, 3), 
+                             n_future=matrix(c(40, 40, 13, 40), nrow=1, ncol=4))
 
 # Account for the observed second stage sample sizes:
-update_mams(updated_mams1, n_obs = c(38, 41, 13, 36), z_scores =  c(1.9, -Inf, 1.2), 
-            selected_trts = NULL)
-
+update_mams(updated_mams1, n_obs=c(38, 41, 13, 36), z_scores=c(1.9, -Inf, 1.2), 
+            selected_trts=NULL)
 
 # 'select_best' design. Account for actually observed sample sizes 
 # in first stage, and drop treatment 2:
-orig_mams <- step_down_mams(nMat = matrix(c(10, 20), nrow = 2, ncol = 4), 
-                            alpha_star = c(0.01, 0.05), lb = 0, selection = "select_best")
+orig_mams <- step_down_mams(nMat=matrix(c(10, 20), nrow=2, ncol=4), 
+                            alpha_star=c(0.01, 0.05), lb=0, selection="select_best")
 
-update_mams(orig_mams, n_obs = c(9, 8, 13, 11), z_scores = c(1.1, -0.5, 0.2), 
-            selected_trts =  c(1, 3), n_future = NULL)
+update_mams(orig_mams, n_obs=c(9, 8, 13, 11), z_scores=c(1.1, -0.5, 0.2), 
+            selected_trts=c(1, 3), n_future=NULL)
 
 }
 

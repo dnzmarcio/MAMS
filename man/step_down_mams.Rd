@@ -10,13 +10,13 @@ The function determines stopping boundaries for all intersection hypothesis test
 }
 
 \usage{
-step_down_mams(nMat = matrix(c(10, 20), 2, 4), 
-               alpha_star = c(0.01, 0.025), lb = 0, 
-               selection = "all_promising")
+step_down_mams(nMat=matrix(c(10, 20), nrow=2, ncol=4),
+               alpha_star=c(0.01, 0.025), lb=0,
+               selection="all_promising")
 }
 
 \arguments{
-  \item{nMat}{Matrix containing the cumulative sample sizes in each treatment arm (columns: control, trt 1, ..., trt K), at each analysis (rows). The number of analyses must be either 2 or 3 (default=matrix(c(10, 20), 2, 4)).}
+  \item{nMat}{Matrix containing the cumulative sample sizes in each treatment arm (columns: control, trt 1, ..., trt K), at each analysis (rows). The number of analyses must be either 2 or 3 (default=matrix(c(10, 20), nrow=2, ncol=4)).}
   \item{alpha_star}{Cumulative familywise error rate to be spent at each analysis (default=c(0.01, 0.025)).}
   \item{lb}{Fixed lower boundary (default=0).}
   \item{selection}{How are treatments selected for the next stage? Using the default "all_promising" method, all treatments with a test statistic exceeding the lower boundary are taken forward to the next stage. If "select_best", only the treatment with the largest statistic may be selected for future stages. (default="all_promising").}
@@ -54,20 +54,19 @@ Magirr D, Stallard N, Jaki T (2014) Flexible sequential designs for multi-arm cl
 \dontrun{
 # Note that some of these examples may take a few minutes to run
 # 2-stage 3-treatments versus control design, all promising treatments are selected:
-step_down_mams(nMat = matrix(c(10, 20), nrow = 2, ncol = 4), 
-               alpha_star = c(0.01, 0.05), lb = 0, 
-               selection = "all_promising")
+step_down_mams(nMat=matrix(c(10, 20), nrow=2, ncol=4), 
+               alpha_star=c(0.01, 0.05), lb=0, 
+               selection="all_promising")
 
 # select the best treatment after the first stage:
-step_down_mams(nMat = matrix(c(10, 20), nrow = 2, ncol = 4), 
-               alpha_star = c(0.01, 0.05), lb = 0, 
-               selection = "select_best")
-
+step_down_mams(nMat=matrix(c(10, 20), nrow=2, ncol=4), 
+               alpha_star=c(0.01, 0.05), lb=0, 
+               selection="select_best")
 
 # 3 stages and unequal randomization:
-step_down_mams(nMat = matrix(c(20, 40, 60, rep(c(10, 20, 30), 3)), nrow = 3, ncol = 4), 
-               alpha_star = c(0.01, 0.025, 0.05), lb = c(0, 0.75), 
-               selection = "all_promising")
+step_down_mams(nMat=matrix(c(20, 40, 60, rep(c(10, 20, 30), 3)), nrow=3, ncol=4), 
+               alpha_star=c(0.01, 0.025, 0.05), lb=c(0, 0.75), 
+               selection="all_promising")
 }
 }
 

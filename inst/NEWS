@@ -12,6 +12,15 @@ Question or suggestions about the package can be send to
    jaki.thomas@gmail.com
 
 --------------------CHANGE LOG--------------------------------------------
+Version 0.6
+
+  o Corrected a bug in new.bounds 
+  o Corrected a bug in mams.sim
+  o A few minor bugs in the plot functions corrected
+  o Arguments bty and las for the plot functions added
+  o Inconsistencies in the documentation removed
+
+--------------------------------------------------------------------------
 Version 0.5
 
   o A bug in function mams.sim corrected

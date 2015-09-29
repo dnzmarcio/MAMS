@@ -63,10 +63,14 @@ new.bounds <- function(K=3, J=2, alpha=0.05, nMat=matrix(c(10,20),nrow=2,ncol=4)
     ## the form of the boundary constraints are determined as functions of C. 
     ######################################################################## 
     Jleft <- J-j
-
+    if(Jleft==1){
+      ind <- J
+    }else{
+      ind <- (j+1):J
+    }
     if(!is.function(u.shape)){
       if (u.shape=='obf'){
-        ub<-c(u,C*sqrt(J/(1:J))[(j+1):J])
+        ub<-c(u,C*sqrt(J/(1:J))[ind])
       }
       else if (u.shape=='pocock'){
         ub<-c(u,rep(C,Jleft))
@@ -75,7 +79,8 @@ new.bounds <- function(K=3, J=2, alpha=0.05, nMat=matrix(c(10,20),nrow=2,ncol=4)
         ub<-c(u,rep(ufix,Jleft-1),C)
       } 
       else if (u.shape=='triangular') {
-        ub<-c(u,C*(1+(1:J)/J)/sqrt(1:J)[(j+1):J])
+        #ub<-c(u,C*(1+(1:J)/J)/sqrt(1:J)[(j+1):J])
+        ub<-c(u,(C*(1+(1:J)/J)/sqrt(1:J))[ind])
       }
     }else{
       ub <- c(u,C*u.shape(J)[(j+1):J])
@@ -91,7 +96,8 @@ new.bounds <- function(K=3, J=2, alpha=0.05, nMat=matrix(c(10,20),nrow=2,ncol=4)
       else if (l.shape=='fixed'){
         lb<-c(l,rep(lfix,Jleft-1),ub[J])
       } else if (l.shape=='triangular') {
-        lb<-c(l,-C*(1-3*(1:J)/J)/sqrt(1:J)[(j+1):J])
+        #lb<-c(l,-C*(1-3*(1:J)/J)/sqrt(1:J)[(j+1):J])
+        lb<-c(l,(-C*(1-3*(1:J)/J)/sqrt(1:J))[ind])
       }
     }else{
       lb <- c(l,C*l.shape(J)[(j+1):(J-1)],ub[J])
@@ -100,6 +106,7 @@ new.bounds <- function(K=3, J=2, alpha=0.05, nMat=matrix(c(10,20),nrow=2,ncol=4)
     mmp<-mesh((1:N-.5)/N*12-6,J,rep(12/N,N))
     evs<-apply(mmp$X,1,prodsum,l=lb,u=ub,R=R,r0=r0,r0diff=r0diff,J=J,K=K,Sigma=Sigma)
     truealpha<-1-mmp$w%*%evs
+
     return(truealpha-alpha)
   }
 
@@ -136,6 +143,7 @@ new.bounds <- function(K=3, J=2, alpha=0.05, nMat=matrix(c(10,20),nrow=2,ncol=4)
 
   r0 <- nMat[,1]/nMat[1,1]
   R <-  nMat[,-1]/nMat[1,1]
+
   ####################################################################
   ## Create the variance covariance matrix from allocation proportions:
   ####################################################################
@@ -160,7 +168,13 @@ new.bounds <- function(K=3, J=2, alpha=0.05, nMat=matrix(c(10,20),nrow=2,ncol=4)
   ## Find boundaries using 'typeI'
   ################################
 
-  uJ<-uniroot(typeI,c(qnorm(1-alpha),5),alpha=alpha,N=N,R=R,r0=r0,r0diff=r0diff,J=J,K=K,Sigma=Sigma,u=u,l=l,u.shape=u.shape,l.shape=l.shape,lfix=lfix,ufix=ufix,tol=0.001)$root
+  uJ <- NULL
+  try(uJ<-uniroot(typeI,c(0,5),alpha=alpha,N=N,R=R,r0=r0,r0diff=r0diff,J=J,K=K,Sigma=Sigma,u=u,l=l,u.shape=u.shape,l.shape=l.shape,lfix=lfix,ufix=ufix,tol=0.001)$root,silent=TRUE) 
+ 
+  if(is.null(uJ)) {
+    stop("No solution found")
+  }
+
 
   ## number of stages already done
   if(!is.null(l)){
@@ -170,6 +184,11 @@ new.bounds <- function(K=3, J=2, alpha=0.05, nMat=matrix(c(10,20),nrow=2,ncol=4)
   }
   ## number of stages left
   Jleft <- J-j
+  if(Jleft==1){
+    ind <- J
+  }else{
+    ind <- (j+1):J
+  }
 
   ########################################################################
   ## the form of the boundary constraints are determined as functions of C. 
@@ -177,7 +196,7 @@ new.bounds <- function(K=3, J=2, alpha=0.05, nMat=matrix(c(10,20),nrow=2,ncol=4)
 
   if(!is.function(u.shape)){
     if (u.shape=='obf'){
-      ub<-c(u,uJ*sqrt(J/(1:J))[(j+1):J])
+      ub<-c(u,uJ*sqrt(J/(1:J))[ind])
     }
     else if (u.shape=='pocock'){
       ub<-c(u,rep(uJ,Jleft))
@@ -186,7 +205,7 @@ new.bounds <- function(K=3, J=2, alpha=0.05, nMat=matrix(c(10,20),nrow=2,ncol=4)
       ub<-c(u,rep(ufix,Jleft),uJ)
     } 
     else if (u.shape=='triangular') {
-      ub<-c(u,uJ*(1+(1:J)/J)/sqrt(1:J)[(j+1):J])
+      ub<-c(u,(uJ*(1+(1:J)/J)/sqrt(1:J))[ind])
     }
   }else{
     ub <- c(u,uJ*u.shape(J)[(j+1):J])
@@ -202,14 +221,14 @@ new.bounds <- function(K=3, J=2, alpha=0.05, nMat=matrix(c(10,20),nrow=2,ncol=4)
     else if (l.shape=='fixed'){
       lb<-c(l,rep(lfix,Jleft-1),ub[J])
     } else if (l.shape=='triangular') {
-      lb<-c(l,-uJ*(1-3*(1:J)/J)/sqrt(1:J)[(j+1):J])
+      lb<-c(l,(-uJ*(1-3*(1:J)/J)/sqrt(1:J))[ind])
     }
   }else{
     lb <- c(l,uJ*l.shape(J)[(j+1):(J-1)],ub[J])
   }
 
 
-  
+
   #########################################################
   ## Find alpha_star
   #########################################################

@@ -69,6 +69,8 @@ mams.sim <- function(nsim=1000,nMat=matrix(c(44,88),nrow=2,ncol=5),u=c(3.068,2.1
     return(list(rej=rej,pow=pow,ess=ss,hmat=hmat))
   }
 
+  if(length(pv)!=(ncol(nMat)-1)) stop("Length of pv is not K")
+
   r0 <- nMat[,1]/nMat[1,1]
   R <-  nMat[,-1]/nMat[1,1]
   if(!is.matrix(R) && is.vector(R))  R <- t(as.matrix( nMat[, -1]/nMat[1, 1]))
@@ -82,7 +84,7 @@ mams.sim <- function(nsim=1000,nMat=matrix(c(44,88),nrow=2,ncol=5),u=c(3.068,2.1
   ### power to reject any of the hypothesis corresponding to the treatments in ptest
   rej<-0
   for(i in 1:nsim){
-    if(any(reps["hmat",i]$hmat[,ptest]>0)){rej<-rej+1}
+    if(any(reps["hmat",i][[1]][,ptest]>0)){rej<-rej+1}
   }
 
   res <- NULL

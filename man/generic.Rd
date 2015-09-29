@@ -17,7 +17,7 @@
 \method{summary}{MAMS}(object, digits=max(3, getOption("digits") - 4), \dots)
 
 \method{plot}{MAMS}(x, col=NULL, pch=NULL, lty=NULL, main=NULL, xlab="Analysis", 
-     ylab="Test statistic", ylim=NULL, type=NULL, \dots)
+     ylab="Test statistic", ylim=NULL, type=NULL, las=1, \dots)
 
 \method{print}{MAMS.sim}(x, digits=max(3, getOption("digits") - 4), \dots)
 
@@ -28,23 +28,25 @@
 \method{summary}{MAMS.step_down}(object, digits=max(3, getOption("digits") - 4), \dots)
 
 \method{plot}{MAMS.step_down}(x, col=NULL, pch=NULL, lty=NULL, main=NULL, xlab="Analysis", 
-     ylab="Test statistic", ylim=NULL, type=NULL, \dots)
+     ylab="Test statistic", ylim=NULL, type=NULL, bty="n", las=1, \dots)
 
 
 }
 
 \arguments{
-  \item{x}{ An output object of class MAMS.}
+  \item{x}{An output object of class MAMS.}
   \item{digits}{Number of significant digits to be printed.}
-  \item{object}{ An output object of class MAMS.}
+  \item{object}{An output object of class MAMS.}
   \item{col}{A specification for the default plotting color (default=\code{NULL}). See \code{par} for more details.}
   \item{pch}{Either an integer specifying a symbol or a single character to be used as the default in plotting points (default=\code{NULL}). See \code{par} for more details.}
   \item{lty}{A specification for the default line type to be used between analyses (default=\code{NULL}). Setting to zero supresses ploting of the lines. See \code{par} for more details.}
   \item{main}{An overall title for the plot (default=\code{NULL}).}
   \item{xlab}{A title for the x axis (default=\code{"Analysis"}).}
   \item{ylab}{A title for the y axis (default=\code{"Test statistic"}).}
-  \item{ylim}{Numeric vector of length 2, giving the y coordinates range (default=\code{"NULL"}).}
+  \item{ylim}{Numeric vector of length 2, giving the y coordinates range (default=\code{NULL}).}
   \item{type}{Type of plot to be used (default=\code{NULL}). See \code{plot} for more details.}
+  \item{bty}{Should a box be drawn around the legend? The default \code{"n"} does not draw a box, the alternative option \code{"o"} does.}
+  \item{las}{A specification of the axis labeling style. The default \code{1} ensures the labels are always horizontal. See \code{?par} for details.}
   \item{\dots}{Further (graphical) arguments to be passed to methods.}
 }
 
@@ -63,7 +65,7 @@
 
   \code{summary.MAMS.step_down} produces same output as \code{print.step_down_mams}.\cr
 
-  \code{plot.MAMS.step_down} produces a plot of the boundaries.
+  \code{plot.MAMS.step_down} produces a plot of the boundaries. When used with \code{update_mams}, pluses indicate observed values of test statistics.
 
 }
 
@@ -90,15 +92,15 @@ print(res)
 summary(res)
 plot(res)
 }
-res <- mams.sim(nsim=10000,nMat=matrix(c(44,88),nrow=2,ncol=5),u=c(3.068,2.169),
-                l=c(0.000,2.169),pv=c(0.65,0.55,0.55,0.55),ptest=c(1:2,4))
+res <- mams.sim(nsim=10000, nMat=matrix(c(44, 88), nrow=2, ncol=5), u=c(3.068, 2.169),
+                l=c(0.000, 2.169), pv=c(0.65, 0.55, 0.55, 0.55), ptest=c(1:2, 4))
 
 print(res)
 
 # 2-stage 3-treatments versus control design, all promising treatments are selected:
-res <- step_down_mams(nMat = matrix(c(10, 20), nrow = 2, ncol = 4), 
-                      alpha_star = c(0.01, 0.05), lb = 0, 
-                      selection = "all_promising")
+res <- step_down_mams(nMat=matrix(c(10, 20), nrow=2, ncol=4), 
+                      alpha_star=c(0.01, 0.05), lb=0, 
+                      selection="all_promising")
 
 print(res)
 summary(res)

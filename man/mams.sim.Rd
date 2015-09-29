@@ -10,23 +10,24 @@ The function simulates multi-arm multi-stage designs and estimates power and exp
 }
 
 \usage{
-mams.sim(nsim=1000,nMat=matrix(c(44,88),nrow=2,ncol=5),u=c(3.068,2.169),
-         l=c(0.000,2.169),pv=rep(0.5,4),ptest=1)
+mams.sim(nsim=1000, nMat=matrix(c(44, 88), nrow=2, ncol=5),
+         u=c(3.068, 2.169), l=c(0.000, 2.169),
+         pv=rep(0.5, 4), ptest=1)
 }
 
 \arguments{
   \item{nsim}{Number of simulation (default=1000).}
-  \item{nMat}{Jx(K+1) dimensional matrix of observed/expected sample sizes. Rows correspond to stages and columns to arms. First column is control (default: 2x4 matrix with 10 subjects per stage and arm). }
+  \item{nMat}{Jx(K+1) dimensional matrix of observed/expected sample sizes. Rows correspond to stages and columns to arms. First column is control (default: 2x5 matrix with 44 subjects per stage and arm). }
   \item{u}{Vector of previously used upper boundaries (default=NULL).}
   \item{l}{Vector of previously used upper boundaries (default=NULL).}
-  \item{pv}{Vector of true treatment effects. See Details (default=rep(0.5,4).}
-  \item{ptest}{Vector of treatment numbers for determining power. For example, c(1,2) will count rejections of one or both hypotheses for testing treatments 1 and 2 against control.}
+  \item{pv}{Vector of size K of true treatment effects. See Details (default=rep(0.5, 4).}
+  \item{ptest}{Vector of treatment numbers for determining power. For example, c(1, 2) will count rejections of one or both hypotheses for testing treatments 1 and 2 against control.}
 }
 
 \details{
 This function simulates multi-arm multi-stage studies for a given matrix of sample sizes and boundaries given by the vectors \code{u} and \code{l}. The effect difference between each experimental treatment and control is given by \code{pv} and is parameterized as \eqn{P(X_k > X_0 ) = p}{P(X_k > X_0 ) = p}. That is the probability of a randomly selected person on treatment k observing a better outcome than a random person on control. For \code{pv=rep(0.5,4} the experimental treatments and control perform equally well (i.e. the global null hypothesis is true). The advantage of this paramterization is that no knowledge about the variance is required. To convert traditional effect sizes, \eqn{\delta}{delta} to this format use \eqn{p=\Phi(\frac{\delta}{\sqrt{2}\sigma})}{Phi(delta/(2^0.5*sigma))}.\cr
 
-The function returns the probability of rejecting any hypothesis (\code{typeI}), the power to reject the first treatment when the first treatment has the largest estimated effect, the proportion of rejections of the hypothesis specified by \code{ptest} (\code{prop.rej}) as well as the expected sample size. \cr
+The function returns the probability of rejecting any hypothesis (\code{typeI}), the power to reject the first hypothesis when the first treatment has the largest estimated effect, the proportion of rejections of the hypothesis specified by \code{ptest} (\code{prop.rej}) as well as the expected sample size. \cr
 }
 
 \value{
@@ -70,16 +71,16 @@ Magirr D, Jaki T, Whitehead J (2012) A generalized Dunnett Test for Multi-arm Mu
 #      lfix=0, p=0.65, p0=0.55)
 
 # under global null hypothesis
-mams.sim(nsim=10000,nMat=matrix(c(44,88),nrow=2,ncol=5),u=c(3.068,2.169),
-         l=c(0.000,2.169),pv=rep(0.5,4),ptest=1)
+mams.sim(nsim=10000, nMat=matrix(c(44, 88), nrow=2, ncol=5), u=c(3.068, 2.169),
+         l=c(0.000, 2.169), pv=rep(0.5, 4), ptest=1)
 
 # under LFC
-mams.sim(nsim=10000,nMat=matrix(c(44,88),nrow=2,ncol=5),u=c(3.068,2.169),
-         l=c(0.000,2.169),pv=c(0.65,0.55,0.55,0.55),ptest=1:2)
+mams.sim(nsim=10000, nMat=matrix(c(44, 88), nrow=2, ncol=5), u=c(3.068, 2.169),
+         l=c(0.000, 2.169), pv=c(0.65, 0.55, 0.55, 0.55), ptest=1:2)
 
 # when all treatments doing similarly well
-mams.sim(nsim=10000,nMat=matrix(c(44,88),nrow=2,ncol=5),u=c(3.068,2.169),
-         l=c(0.000,2.169),pv=c(0.63,0.62,0.60,0.61),ptest=4)
+mams.sim(nsim=10000, nMat=matrix(c(44, 88), nrow=2, ncol=5), u=c(3.068, 2.169),
+         l=c(0.000, 2.169), pv=c(0.63, 0.62, 0.60, 0.61), ptest=4)
 
 }
 

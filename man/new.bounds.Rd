@@ -10,13 +10,13 @@ The function determines updated boundaries of a multi-arm multi-stage study base
 }
 
 \usage{
-new.bounds(K=3, J=2, alpha=0.05, nMat=matrix(c(10,20),nrow=2,ncol=4), 
-           u=NULL, l=NULL, u.shape="obf", l.shape="fixed", lfix=0, 
+new.bounds(K=3, J=2, alpha=0.05, nMat=matrix(c(10, 20), nrow=2, ncol=4), 
+           u=NULL, l=NULL, u.shape="obf", l.shape="fixed", lfix=0,
            ufix=NULL, N=20)
 }
 
 \arguments{
-  \item{K}{Number of experimental treatments (default=4).}
+  \item{K}{Number of experimental treatments (default=3).}
   \item{J}{Number of stages (default=2).}
   \item{alpha}{One-sided familywise error rate (default=0.05).}
   \item{nMat}{Jx(K+1) dimensional matrix of observed/expected sample sizes. Rows correspond to stages and columns to arms. First column is control (default: 2x4 matrix with 10 subjects per stage and arm). }
@@ -24,8 +24,8 @@ new.bounds(K=3, J=2, alpha=0.05, nMat=matrix(c(10,20),nrow=2,ncol=4),
   \item{l}{ Vector of previously used upper boundaries (default=NULL).}
   \item{u.shape}{ Shape of upper boundary. Either a function specifying the shape or one of \code{"pocock"}, \code{"obf"} (the default), \code{"triangular"} and \code{"fixed"}. See details.}
   \item{l.shape}{ Shape of lower boundary. Either a function specifying the shape or one of \code{"pocock"}, \code{"obf"} (the default), \code{"triangular"} and \code{"fixed"}. See details.}
-  \item{lfix}{ Fixed lower boundary (default=NULL). Only used if \code{shape="fixed"}.}
   \item{ufix}{ Fixed upper boundary (default=NULL). Only used if \code{shape="fixed"}.}
+  \item{lfix}{ Fixed lower boundary (default=0). Only used if \code{shape="fixed"}.}
   \item{N}{ Number of quadrature points per dimension in the outer integral (default=20).}
 }
 
@@ -73,17 +73,17 @@ Whitehead J (1997) The Design and Analysis of Sequential Clinical Trials. Wiley:
 # mams(K=4, J=2, alpha=0.05, power=0.9, r=1:2, r0=1:2, u.shape="obf", l.shape="fixed", 
 #      lfix=0, sample.size=FALSE)
 
-new.bounds(K=4, J=2, alpha=0.05, nMat=matrix(c(10,20),nrow=2,ncol=5), u=NULL, l=NULL, 
+new.bounds(K=4, J=2, alpha=0.05, nMat=matrix(c(10, 20), nrow=2, ncol=5), u=NULL, l=NULL, 
            u.shape="obf", l.shape="fixed", lfix=0)
 
 # A 2-stage design that was designed to use an O'Brien & Fleming efficacy and 
 # zero futility boundary with equal sample size per arm and stage (n=14).
-# The observed sample size after stage one are 10,10,18,10,13 for each arm 
-# while the original upper bounds used are (3.068,2.169) for stage 1. 
-# The updated bounds are (3.068,2.167).
+# The observed sample size after stage one are 10, 10, 18, 10, 13 for each arm 
+# while the original upper bounds used are (3.068, 2.169) for stage 1. 
+# The updated bounds are (3.068, 2.167).
 
 new.bounds(K=4, J=2, alpha=0.05, 
-           nMat=matrix(c(10,28,10,28,18,28,10,28,13,28),nrow=2,ncol=5), 
+           nMat=matrix(c(10, 28, 10, 28, 18, 28, 10, 28, 13, 28), nrow=2, ncol=5), 
            u=3.068, l=0, u.shape="obf", l.shape="fixed", lfix=0)
 }
 }

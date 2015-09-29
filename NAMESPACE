@@ -1,6 +1,10 @@
 import(utils)
 import(mvtnorm)
 
+importFrom("graphics", "axis", "legend", "lines", "matplot",
+             "matpoints", "mtext", "points")
+importFrom("stats", "dnorm", "pnorm", "qnorm", "rnorm", "uniroot")
+
 S3method(plot, MAMS)
 S3method(plot, MAMS.step_down)
 S3method(print, MAMS)
@@ -9,6 +13,7 @@ S3method(print, MAMS.step_down)
 S3method(summary, MAMS)
 S3method(summary, MAMS.sim)
 S3method(summary, MAMS.step_down)
+
 
 export(
        mams,

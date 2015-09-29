@@ -19,14 +19,14 @@ mams(K=4, J=2, alpha=0.05, power=0.9, r=1:2, r0=1:2, p=0.75 , p0=0.5,
   \item{K}{Number of experimental treatments (default=4).}
   \item{J}{Number of stages (default=2).}
   \item{alpha}{One-sided familywise error rate (default=0.05).}
-  \item{power}{ Desired power (default=0.90).}
+  \item{power}{ Desired power (default=0.9).}
   \item{r}{ Vector of allocation ratios (default=1:2).}
   \item{r0}{ Vector ratio on control (default=1:2).}
   \item{p}{ Interesting treatment effect. See Details (default=0.75).}
-  \item{p0}{ Uninteresting treatment effect. See Details. (default=0.5).}
+  \item{p0}{ Uninteresting treatment effect. See Details (default=0.5).}
   \item{u.shape}{ Shape of upper boundary. Either a function specifying the shape or one of \code{"pocock"}, \code{"obf"} (the default), \code{"triangular"} and \code{"fixed"}. See details.}
   \item{l.shape}{ Shape of lower boundary. Either a function specifying the shape or one of \code{"pocock"}, \code{"obf"} (the default), \code{"triangular"} and \code{"fixed"}. See details.}
-  \item{lfix}{ Fixed lower boundary (default=NULL). Only used if \code{shape="fixed"}.}
+  \item{lfix}{ Fixed lower boundary (default=0). Only used if \code{shape="fixed"}.}
   \item{ufix}{ Fixed upper boundary (default=NULL). Only used if \code{shape="fixed"}.}
   \item{nstart}{ Starting point for finding the sample size (default=1).}
   \item{sample.size}{ Logical if sample size should be found as well (default=TRUE). }
@@ -34,7 +34,7 @@ mams(K=4, J=2, alpha=0.05, power=0.9, r=1:2, r0=1:2, p=0.75 , p0=0.5,
 }
 
 \details{
-This function finds the boundaries and sample size of a multi-arm multi-stage study with K active treatments plus control in which all promising treatments are continued at interim analyses as described in Magirr et al (2012). At each interim analysis the test statistics are compared to the lower lower (futility) bound and any treatment whose corresponding test statistic falls below that bound is discontinued. Similarly if any test statistic exceeds the upper (efficacy) bound the null hypothesis corresponding to that treatment can be rejected and superiority of that treatment over control claimed. At the same time the study is stopped. If at least one test statistic exceeds the lower bound and none exceeds the upper bound the study is continued and further patients are recruited to all remaining experimental treatments plus control.\cr
+This function finds the boundaries and sample size of a multi-arm multi-stage study with K active treatments plus control in which all promising treatments are continued at interim analyses as described in Magirr et al (2012). At each interim analysis the test statistics are compared to the lower (futility) bound and any treatment whose corresponding test statistic falls below that bound is discontinued. Similarly if any test statistic exceeds the upper (efficacy) bound the null hypothesis corresponding to that treatment can be rejected and superiority of that treatment over control claimed. At the same time the study is stopped. If at least one test statistic exceeds the lower bound and none exceeds the upper bound the study is continued and further patients are recruited to all remaining experimental treatments plus control.\cr
 
 The design is found under the least favorable configuration which requires an interesting treatment effect \code{p} that if present we would like to find with high probability and an uninteresting effect \code{p0}. Both \code{p} and \code{p0} are parameterized as \eqn{P(X_k > X_0 ) = p}{P(X_k > X_0 ) = p}, that is the probability of a randomly selected person on treatment k observing a better outcome than a random person on control. For \code{p=0.5} the experimental treatment and control perform equally well. The advantage of this paramterization is that no knowledge about the variance is required. To convert traditional effect sizes, \eqn{\delta}{delta} to this format use \eqn{p=\Phi(\frac{\delta}{\sqrt{2}\sigma})}{Phi(delta/(2^0.5*sigma))}.\cr
 
@@ -87,16 +87,14 @@ mams(K=4, J=2, alpha=0.05, power=0.9, r=1:2, r0=1:2, p=0.65 , p0=0.55,
 mams(K=4, J=3, alpha=0.05, power=0.9, r=1:3, r0=1:3, p=0.65 , p0=0.55, 
      u.shape="triangular", l.shape="triangular", nstart=30)
 
-
 ## Example of a custom boundary function without sample size evaluation
 mams(K=6, J=3, alpha=0.05, power=0.9, r=1:3, r0=1:3, p=0.7 , p0=0.5, 
      u.shape=function(x)return(x:1), l.shape="fixed", lfix=0, 
      sample.size=FALSE)
 
-
 ## Different allocation ratios between control and experimental treatments. 
 ## Twice as many patients are randomized to control at each stage.
-mams(K=4, J=2, alpha=0.05, power=0.9, r=1:2, r0=c(2,4), p=0.65 , p0=0.55, 
+mams(K=4, J=2, alpha=0.05, power=0.9, r=1:2, r0=c(2, 4), p=0.65 , p0=0.55, 
      u.shape="obf", l.shape="fixed", lfix=0, nstart=30)
 }
 

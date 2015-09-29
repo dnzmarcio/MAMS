@@ -1,4 +1,4 @@
-step_down_mams <- function(nMat = matrix(c(10, 20), 2, 4), alpha_star = c(0.01, 0.025), lb = 0, selection = "all_promising"){
+step_down_mams <- function(nMat = matrix(c(10, 20), nrow=2, ncol=4), alpha_star = c(0.01, 0.025), lb = 0, selection = "all_promising"){
 
     # checking input parameters
     if (!all(diff(nMat) >= 0)) {stop("total sample size per arm cannot decrease between stages.")}
