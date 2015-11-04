@@ -9,8 +9,8 @@ print.MAMS <- function (x, digits=max(3, getOption("digits") - 4), ...) {
     colnames(res)<-paste("Stage",1:x$J)
     rownames(res) <- c("Cumulative sample size per stage (control):", "Cumulative sample size per stage (active):")
 
-    res[1,] <- x$n*x$rMat[1,]
-    res[2,] <- x$n*x$rMat[2,]
+    res[1,] <- ceiling(x$n*x$rMat[1,])
+    res[2,] <- ceiling(x$n*x$rMat[2,])
 
     print(res)
   
@@ -38,8 +38,8 @@ summary.MAMS<-function(object, digits=max(3, getOption("digits") - 4), ...){
     colnames(res)<-paste("Stage",1:object$J)
     rownames(res) <- c("Cumulative sample size per stage (control):", "Cumulative sample size per stage (active):")
 
-    res[1,] <- object$n*object$rMat[1,]
-    res[2,] <- object$n*object$rMat[2,]
+    res[1,] <- ceiling(object$n*object$rMat[1,])
+    res[2,] <- ceiling(object$n*object$rMat[2,])
 
     print(res)
   

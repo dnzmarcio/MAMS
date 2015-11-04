@@ -201,9 +201,7 @@ mams <- function(K=4, J=2, alpha=0.05, power=0.9, r=1:2, r0=1:2, p=0.75 , p0=0.5
     b <- l.shape(J)
     if(!all(sort(b,decreasing=FALSE)==b)){stop("Lower boundary shape is decreasing")}
   }
-  
-
-
+ 
   ############################################################################
   ## Convert treatment effects into absolute effects with standard deviation 1:
   ############################################################################
@@ -294,22 +292,35 @@ mams <- function(K=4, J=2, alpha=0.05, power=0.9, r=1:2, r0=1:2, p=0.75 , p0=0.5
   ##  r*n and r0*n.
   #############################################################
 
-  n<-nstart 
-  ###################################################################################################
-  ## program could be very slow starting at n=0, may want to start at more sensible lower bound on n
-  ## unlike type I error, power equation does not neccessarily have unique solution n therefore search
-  ## for smallest solution:
-  ####################################################################################################
-  
-  pow<-0
-  if(sample.size){
-    while (pow==0){
-      n<-n+1
-      pow<-(typeII(n,beta=1-power,l=l,u=u,N=N,r=r,r0=r0,r0diff=r0diff,J=J,K=K,delta=delta,delta0=delta0,sig=sig,Sigma=Sigma)<0)
+  if(J==1 & p0==0.5) {
+    if(r0>r){
+      r <- r/r0
+      r0 <- r0/r0
     }
+    rho <- r / (r + r0)
+    corr <- matrix(rho, K, K) + diag(1 - rho, K)
+    quan <- qmvnorm(1-alpha, mean=rep(0, K), corr=corr)$quantile
+    n <- ((quan + qnorm(power)) / (qnorm(p)*sqrt(2)))^2 *(1+1/r)
+
   }else{
-    n <- NULL
-  }  
+
+    n<-nstart 
+    ###################################################################################################
+    ## program could be very slow starting at n=0, may want to start at more sensible lower bound on n
+    ## unlike type I error, power equation does not neccessarily have unique solution n therefore search
+    ## for smallest solution:
+    ####################################################################################################
+  
+    pow<-0
+    if(sample.size){
+      while (pow==0){
+        n<-n+1
+        pow<-(typeII(n,beta=1-power,l=l,u=u,N=N,r=r,r0=r0,r0diff=r0diff,J=J,K=K,delta=delta,delta0=delta0,sig=sig,Sigma=Sigma)<0)
+      }
+    }else{
+      n <- NULL
+    }  
+  }
 
   res <- NULL
   res$l <- l  
@@ -317,7 +328,7 @@ mams <- function(K=4, J=2, alpha=0.05, power=0.9, r=1:2, r0=1:2, p=0.75 , p0=0.5
   res$n <- n
 
   res$rMat <- rbind(r0,matrix(r,ncol=J,nrow=K,byrow=TRUE)) ## allocation ratios
-  res$N <- sum(res$rMat[,J]*res$n) ## maximum total sample sizeres$N <- K*r[J]*n+r0[J]*n ## maximum total sample size
+  res$N <- sum(ceiling(res$rMat[,J]*res$n)) ## maximum total sample sizeres$N <- K*r[J]*n+r0[J]*n ## maximum total sample size
 
   res$K <- K
   res$J <- J
