@@ -12,6 +12,11 @@ Question or suggestions about the package can be send to
    jaki.thomas@gmail.com
 
 --------------------CHANGE LOG--------------------------------------------
+Version 0.8
+
+  o Removal of some depreciated code
+
+--------------------------------------------------------------------------
 Version 0.7
 
   o Modified print and summary to only return integer sample sizes

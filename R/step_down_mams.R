@@ -9,7 +9,7 @@ step_down_mams <- function(nMat = matrix(c(10, 20), nrow=2, ncol=4), alpha_star 
     if (length(alpha_star) != J) {stop("length of error spending vector must be same as number of stages")}
     if (!all(diff(alpha_star) >= 0)) {stop("cumulative familywise error must increase.")}
     if (length(lb) != J - 1) {stop("lower boundary must be specified at all analysis points except the last")}
-    if ((selection != "all_promising") && (selection != "select_best")) {stop("invalid selection method")}
+    match.arg(selection,c("all_promising","select_best"))
     
   get.hyp <- function(n){ # find the nth intersection hypothesis (positions of 1s in binary n)
     indlength = ceiling(log(n)/log(2)+.0000001)

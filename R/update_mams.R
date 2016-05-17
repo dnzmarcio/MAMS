@@ -8,7 +8,7 @@ update_mams <- function(current_mams = step_down_mams(), n_obs = NULL, z_scores 
     if (!is.null(selected_trts)) selected_trts <- c(current_mams$selected_trts, list(selected_trts))
     
     # checking input parameters
-    if (class(current_mams) != "MAMS.step_down") {stop("current_mams must be a 'MAMS.step_down' object")}
+    if (!is(current_mams, "MAMS.step_down")) {stop("current_mams must be a 'MAMS.step_down' object")}
     if (length(n_obs) != current_mams$K + 1) {stop("must provide observed cumulative sample size for each treatment")}
 
     completed_stages <- length(z_scores)

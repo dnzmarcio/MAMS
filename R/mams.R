@@ -161,11 +161,7 @@ mams <- function(K=4, J=2, alpha=0.05, power=0.9, r=1:2, r0=1:2, p=0.75 , p0=0.5
 
     if(J>1){
       for (j in 2:J){  
-        if (j==2){
-          A<-sqrt(r[j]/(r[j]-r[1:(j-1)]))
-        }else{
-          A<-diag(sqrt(r[j]/(r[j]-r[1:(j-1)])))
-        }
+        A<-diag(sqrt(r[j]/(r[j]-r[1:(j-1)])),ncol=j-1)
         SigmaJ<-A%*%(Sigma[1:(j-1),1:(j-1)]-Sigma[1:(j-1),j]%*%t(Sigma[1:(j-1),j]))%*%A
         mmp<-mesh((1:N-.5)/N*12-6,j,rep(12/N,N))
         evs<-apply(mmp$X,1,prodsum3,l=l,u=u,r=r,r0=r0,r0diff=r0diff,J=j,K=K,delta=delta,delta0=delta0,n=n,sig=sig,Sigma=Sigma[1:j,1:j],SigmaJ=SigmaJ)
@@ -346,9 +342,3 @@ mams <- function(K=4, J=2, alpha=0.05, power=0.9, r=1:2, r0=1:2, p=0.75 , p0=0.5
 
 }
 
-####
-## future functions
-## - update boundaries (write separate function that takes a MAMS object)
-## - correct for estimating variances using t-quantiles
-## - expected sample size function
-## - Implement code in C?
