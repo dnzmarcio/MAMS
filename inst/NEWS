@@ -12,6 +12,11 @@ Question or suggestions about the package can be send to
    jaki.thomas@gmail.com
 
 --------------------CHANGE LOG--------------------------------------------
+Version 0.9
+
+  o Corrected a bug in update_mams
+
+--------------------------------------------------------------------------
 Version 0.8
 
   o Removal of some depreciated code

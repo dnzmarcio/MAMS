@@ -192,7 +192,7 @@ update_mams <- function(current_mams = step_down_mams(), n_obs = NULL, z_scores 
             best_treatment <- treatments[which.max(z_scores[[completed_stages]][treatments])]
             if (max_z <= u[[i]][completed_stages]) alpha_star[[i]][completed_stages] <- 0
             if (max_z > u[[i]][completed_stages]) {
-                alpha[[i]][completed_stages:J] <- 1
+                alpha_star[[i]][completed_stages:J] <- 1
                 if (J > completed_stages) {
                     l[[i]][(completed_stages + 1):J] <- u[[i]][(completed_stages + 1):J] <- -Inf
                 }
