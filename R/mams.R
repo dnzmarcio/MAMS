@@ -205,7 +205,15 @@ mams <- function(K=4, J=2, alpha=0.05, power=0.9, r=1:2, r0=1:2, p=0.75 , p0=0.5
   delta<-sqrt(2)*qnorm(p)
   delta0<-sqrt(2)*qnorm(p0)
   sig<-1
+
+  ############################################################################
+  ## Ensure equivalent allocation ratios yield same sample size
+  ############################################################################
   
+  h <- min(c(r,r0))
+  r <- r/h
+  r0 <- r0/h
+
   ####################################################################
   ## Create the variance covariance matrix from allocation proportions:
   ####################################################################

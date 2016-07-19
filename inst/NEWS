@@ -12,6 +12,12 @@ Question or suggestions about the package can be send to
    jaki.thomas@gmail.com
 
 --------------------CHANGE LOG--------------------------------------------
+Version 1.0
+
+  o Altered mams function to improve consistency for different allocation
+    ratios
+
+--------------------------------------------------------------------------
 Version 0.9
 
   o Corrected a bug in update_mams
