@@ -12,6 +12,11 @@ Question or suggestions about the package can be send to
    jaki.thomas@gmail.com
 
 --------------------CHANGE LOG--------------------------------------------
+Version 1.01
+
+  o Corrected minor bug in mams.sim for K=1
+
+--------------------------------------------------------------------------
 Version 1.0
 
   o Altered mams function to improve consistency for different allocation

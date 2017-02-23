@@ -9,7 +9,7 @@ citEntry(entry="Article",
          volume = "99",
          number = "2",
          pages = "494-501",
-         url = "http://CRAN.R-project.org/package=MAMS",         
+         url = "https://CRAN.R-project.org/package=MAMS",         
          textVersion = paste("Magirr D, Jaki T, Whitehead J (2012) A generalized Dunnett Test for Multiarm-Multistage Clinical Studies with Treatment Selection. Biometrika. 99(2):494-501.")
          )
 
