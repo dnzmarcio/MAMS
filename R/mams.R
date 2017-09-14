@@ -1,5 +1,6 @@
-mams <- function(K=4, J=2, alpha=0.05, power=0.9, r=1:2, r0=1:2, p=0.75 , p0=0.5, u.shape="obf", l.shape="fixed", lfix=0, ufix=NULL, nstart=1, sample.size=TRUE, N=20){
-
+mams <- function(K=4, J=2, alpha=0.05, power=0.9, r=1:2, r0=1:2, p=0.75, p0=0.5, delta=NULL, delta0=NULL, sd=NULL,
+                 ushape="obf", lshape="fixed", ufix=NULL, lfix=0, nstart=1, nstop=NULL, sample.size=TRUE, N=20,
+                 type="normal"){
 
   #require(mvtnorm) ## the function pmvnorm is required to evaluate multivariate normal probabilities
 
@@ -49,46 +50,46 @@ mams <- function(K=4, J=2, alpha=0.05, power=0.9, r=1:2, r0=1:2, p=0.75 , p0=0.5
   ##  The midpoint rule is used with a range of -6 to 6 in each dimension. 
   #############################################################################################################
 
-  typeI<-function(C,alpha,N,r,r0,r0diff,J,K,Sigma,u.shape,l.shape,lfix=NULL,ufix=NULL){
+  typeI<-function(C,alpha,N,r,r0,r0diff,J,K,Sigma,ushape,lshape,lfix=NULL,ufix=NULL){
 
     ########################################################################
     ## the form of the boundary constraints are determined as functions of C. 
     ######################################################################## 
-    if(!is.function(u.shape)){
-      if (u.shape=='obf'){
+    if(!is.function(ushape)){
+      if (ushape=='obf'){
         u<-C*sqrt(r[J]/r)
       }
-      else if (u.shape=='pocock'){
+      else if (ushape=='pocock'){
         u<-rep(C,J)
       }
-      else if (u.shape=='fixed'){
+      else if (ushape=='fixed'){
         u<-c(rep(ufix,J-1),C)
       } 
-      else if (u.shape=='triangular') {
+      else if (ushape=='triangular') {
         u<-C*(1+r/r[J])/sqrt(r) 
       }
     }else{
-      u <- C*u.shape(J)
+      u <- C*ushape(J)
     }
 
-    if(!is.function(l.shape)){
-      if (l.shape=='obf'){
+    if(!is.function(lshape)){
+      if (lshape=='obf'){
         l<- c(-C*sqrt(r[J]/r[1:(J-1)]),u[J])
       }
-      else if (l.shape=='pocock'){
+      else if (lshape=='pocock'){
         l<-c(rep(-C,J-1),u[J])
       }
-      else if (l.shape=='fixed'){
+      else if (lshape=='fixed'){
         l<-c(rep(lfix,J-1),u[J])
-      } else if (l.shape=='triangular') {
-        if(u.shape=="triangular"){
+      } else if (lshape=='triangular') {
+        if(ushape=="triangular"){
           l<--C*(1-3*r/r[J])/sqrt(r)
         }else{
           l<--C*(1-3*r/r[J])/sqrt(r)/(-1*(1-3)/sqrt(J))
         }
       }
     }else{
-      l <- c(C*l.shape(J)[1:(J-1)],u[J])
+      l <- c(C*lshape(J)[1:(J-1)],u[J])
     }
 
 
@@ -173,39 +174,63 @@ mams <- function(K=4, J=2, alpha=0.05, power=0.9, r=1:2, r0=1:2, p=0.75 , p0=0.5
 
   ## checking input parameters
   if(K%%1>0 | J%%1>0){stop("K and J need to be integers.")}
-  if(K < 1 | J < 1){stop("The number of stages and treatments must be at least 1.")}
+  if(K<1 | J<1){stop("The number of stages and treatments must be at least 1.")}
   if(N<=3){stop("Number of points for integration by quadrature to small or negative.")}
   if(N>3 & N<=10){warning("Number of points for integration by quadrature is small which may result in inaccurate solutions.")}
-  if(p<0 | p>1 | p0<0 | p0>1){stop("Treatment effect parameter not within 0 and 1.")}
   if(alpha<0 | alpha>1 | power<0 | power>1){stop("Error rate or power not between 0 and 1.")}
-  if(p<p0){stop("Interesting treatment effect smaller than uninteresting effect.")}
-  if(p0<0.5 ){warning("Uninteresting treatment effect less than 0.5 which implies that reductions in effect over placebo are interesting.")}
-  if(length(r)!=length(r0)){stop('Different length of allocation ratios on control and experimental treatments')}
-  if(length(r)!=J){stop('Length of allocation ratios does not match number of stages')}
-
-  if(!is.function(u.shape)){
-    if(!u.shape%in%c("pocock","obf","triangular","fixed")){stop("Upper boundary does not match the available options")}
-    if(u.shape=="fixed" & is.null(ufix)){stop("ufix required when using a fixed upper boundary shape.")}
-  }else{
-    b <- u.shape(J)
-    if(!all(sort(b,decreasing=TRUE)==b)){stop("Upper boundary shape is increasing")}
+  if(length(r)!=length(r0)){stop("Different length of allocation ratios on control and experimental treatments.")}
+  if(length(r)!=J){stop("Length of allocation ratios does not match number of stages.")}
+  
+  if(is.numeric(p) & is.numeric(p0) & is.numeric(delta) & is.numeric(delta0) & is.numeric(sd)){
+    stop("Specify the effect sizes either via (p, p0) or via (delta, delta0, sd) and set the other parameters to NULL.")
   }
-  if(!is.function(l.shape)){
-   if(!l.shape%in%c("pocock","obf","triangular","fixed")){stop("Lower boundary does not match the available options")}
-   if(l.shape=="fixed" & is.null(lfix)){stop("lfix required when using a fixed lower boundary shape.")}
+  
+  if(is.numeric(p) & is.numeric(p0)){
+    if(p<0 | p>1 | p0<0 | p0>1){stop("Treatment effect parameter not within 0 and 1.")}
+    if(p<=p0){stop("Interesting treatment effect must be larger than uninteresting effect.")}
+    if(p0<0.5){warning("Uninteresting treatment effect less than 0.5 which implies that reductions in effect over placebo are interesting.")}
   }else{
-    b <- l.shape(J)
-    if(!all(sort(b,decreasing=FALSE)==b)){stop("Lower boundary shape is decreasing")}
+    if(is.numeric(delta) & is.numeric(delta0) & is.numeric(sd)){
+      if(sd<=0){stop("Standard deviation must be positive.")}
+    }else{
+      stop("Specify the effect sizes either via (p, p0) or via (delta, delta0, sd).")
+    }
+  }
+  
+  if(is.function(ushape) & is.function(lshape)){
+    warning("You have specified your own functions for both the lower and upper boundary. Please check carefully whether the resulting boundaries are sensible.")
+  }
+
+  if(!is.function(ushape)){
+    if(!ushape%in%c("pocock","obf","triangular","fixed")){stop("Upper boundary does not match the available options.")}
+    if(ushape=="fixed" & is.null(ufix)){stop("ufix required when using a fixed upper boundary shape.")}
+  }else{
+    b <- ushape(J)
+    if(!all(sort(b,decreasing=TRUE)==b)){stop("Upper boundary shape is increasing.")}
+  }
+  if(!is.function(lshape)){
+   if(!lshape%in%c("pocock","obf","triangular","fixed")){stop("Lower boundary does not match the available options.")}
+   if(lshape=="fixed" & is.null(lfix)){stop("lfix required when using a fixed lower boundary shape.")}
+  }else{
+    b <- lshape(J)
+    if(!all(sort(b,decreasing=FALSE)==b)){stop("Lower boundary shape is decreasing.")}
   }
  
   ############################################################################
   ## Convert treatment effects into absolute effects with standard deviation 1:
   ############################################################################
-
-  delta<-sqrt(2)*qnorm(p)
-  delta0<-sqrt(2)*qnorm(p0)
-  sig<-1
-
+  
+  if(is.numeric(p) & is.numeric(p0)){
+    delta <- sqrt(2) * qnorm(p)
+    delta0 <- sqrt(2) * qnorm(p0)
+    sig <- 1
+  }else{
+    delta <- delta
+    delta0 <- delta0
+    p0 <- pnorm(delta0/sqrt(2 * sd^2)) # for subsequent if(J==1 & p0==0.5)
+    sig <- sd
+  }
+  
   ############################################################################
   ## Ensure equivalent allocation ratios yield same sample size
   ############################################################################
@@ -235,61 +260,67 @@ mams <- function(K=4, J=2, alpha=0.05, power=0.9, r=1:2, r0=1:2, p=0.75 , p0=0.5
   ################################
   ## Find boundaries using 'typeI'
   ################################
+  
+  # Quick & dirty fix to enable single-stage design with specification lshape="obf" 
+  if(!is.function(lshape)){
+    if(J==1 & lshape=="obf"){
+      lshape <- "pocock"
+    }
+  }
+  
   uJ<-NULL
   ## making sure that lfix is not larger then uJ
-  try(uJ<-uniroot(typeI,c(qnorm(1-alpha)/2,5),alpha=alpha,N=N,r=r,r0=r0,r0diff=r0diff,J=J,K=K,Sigma=Sigma,u.shape=u.shape,l.shape=l.shape,lfix=lfix,ufix=ufix,tol=0.001)$root, silent=TRUE)
-  if(is.null(uJ)){stop("Lower boundary (lfix) is too large.")}
+  try(uJ<-uniroot(typeI,c(qnorm(1-alpha)/2,5),alpha=alpha,N=N,r=r,r0=r0,r0diff=r0diff,J=J,K=K,Sigma=Sigma,ushape=ushape,lshape=lshape,lfix=lfix,ufix=ufix,tol=0.001)$root, silent=TRUE)
+  #if(is.null(uJ)){stop("Lower boundary (lfix) is too large.")}
+  if(is.null(uJ)){stop("No boundaries can be found.")}
 
-  if(!is.function(u.shape)){
-    if (u.shape=='obf'){
+  if(!is.function(ushape)){
+    if (ushape=='obf'){
       u<-uJ*sqrt(r[J]/r)
     }
-    else if (u.shape=='pocock'){
+    else if (ushape=='pocock'){
       u<-rep(uJ,J)
     }
-    else if (u.shape=='fixed'){
+    else if (ushape=='fixed'){
       u<-c(rep(ufix,J-1),uJ)
-    } else if (u.shape=='triangular') {
+    } else if (ushape=='triangular') {
       u<-uJ*(1+r/r[J])/sqrt(r) 
     }
   }else{
-    u <- uJ*u.shape(J)
+    u <- uJ*ushape(J)
   }
 
-  if(!is.function(l.shape)){
-    if (l.shape=='obf'){
+  if(!is.function(lshape)){
+    if (lshape=='obf'){
       l<- c(-uJ*sqrt(r[J]/r[1:(J-1)]),u[J])
     }
-    else if (l.shape=='pocock'){
+    else if (lshape=='pocock'){
       l<-c(rep(-uJ,J-1),u[J])
     }
-    else if (l.shape=='fixed'){
+    else if (lshape=='fixed'){
       l<-c(rep(lfix,J-1),u[J])
-    } else if (l.shape=='triangular') {
-       if(u.shape=="triangular"){
+    } else if (lshape=='triangular') {
+       if(ushape=="triangular"){
           l<--uJ*(1-3*r/r[J])/sqrt(r)
        }else{
           l<--uJ*(1-3*r/r[J])/sqrt(r)/(-1*(1-3)/sqrt(J))
        }
     }
   }else{
-    l <- c(uJ*l.shape(J)[1:(J-1)],u[J])
+    l <- c(uJ*lshape(J)[1:(J-1)],u[J])
   }
 
-
   #########################################################
-  ## Find alpha_star
+  ## Find alpha.star
   #########################################################
-  alpha_star <- numeric(J)
-  alpha_star[1] <- typeI(u[1], alpha = 0, N = N, r = r[1], r0 = r0[1], r0diff = r0diff[1], J = 1, K = K, Sigma = Sigma, u.shape = "fixed", l.shape = "fixed", lfix = NULL, ufix = NULL)
+  alpha.star <- numeric(J)
+  alpha.star[1] <- typeI(u[1], alpha = 0, N = N, r = r[1], r0 = r0[1], r0diff = r0diff[1], J = 1, K = K, Sigma = Sigma, ushape = "fixed", lshape = "fixed", lfix = NULL, ufix = NULL)
   if (J > 1){
       for (j in 2:J){
-          alpha_star[j] <- typeI(u[j], alpha = 0, N = N, r = r[1:j], r0 = r0[1:j], r0diff = r0diff[1:j], J = j, K = K, Sigma = Sigma, u.shape = "fixed", l.shape = "fixed", lfix = l[1:(j - 1)], ufix = u[1:(j - 1)])
+          alpha.star[j] <- typeI(u[j], alpha = 0, N = N, r = r[1:j], r0 = r0[1:j], r0diff = r0diff[1:j], J = j, K = K, Sigma = Sigma, ushape = "fixed", lshape = "fixed", lfix = l[1:(j - 1)], ufix = u[1:(j - 1)])
       }
   }
 
-
-  
   #############################################################
   ##  Now find samplesize for arm 1 stage 1 (n)  using 'typeII'.
   ##  Sample sizes for all stages are then determined by
@@ -308,22 +339,38 @@ mams <- function(K=4, J=2, alpha=0.05, power=0.9, r=1:2, r0=1:2, p=0.75 , p0=0.5
 
   }else{
 
-    n<-nstart 
+    n <- nstart 
     ###################################################################################################
     ## program could be very slow starting at n=0, may want to start at more sensible lower bound on n
     ## unlike type I error, power equation does not neccessarily have unique solution n therefore search
     ## for smallest solution:
     ####################################################################################################
-  
-    pow<-0
+    
+    pow <- 0
     if(sample.size){
-      while (pow==0){
-        n<-n+1
-        pow<-(typeII(n,beta=1-power,l=l,u=u,N=N,r=r,r0=r0,r0diff=r0diff,J=J,K=K,delta=delta,delta0=delta0,sig=sig,Sigma=Sigma)<0)
+      
+      if(is.null(nstop)){
+        nx <- nstart
+        po <- 0
+        while (po==0){
+          nx <- nx + 1
+          po <- (typeII(nx, beta=1 - power, l=l, u=u, N=N, r=r, r0=r0, r0diff=r0diff, J=1,
+                        K=K, delta=delta, delta0=delta0, sig=sig, Sigma=Sigma) < 0)
+        }
+        nstop <- 3 * nx
       }
+      
+      while (pow==0 & n<=nstop){
+        n <- n + 1
+        pow <- (typeII(n, beta=1 - power, l=l, u=u, N=N, r=r, r0=r0, r0diff=r0diff, J=J,
+                       K=K, delta=delta, delta0=delta0, sig=sig, Sigma=Sigma) < 0)
+      }
+      
+      if((n - 1)==nstop){warning("The sample size was limited by nstop.")}
+      
     }else{
       n <- NULL
-    }  
+    }
   }
 
   res <- NULL
@@ -337,12 +384,14 @@ mams <- function(K=4, J=2, alpha=0.05, power=0.9, r=1:2, r0=1:2, p=0.75 , p0=0.5
   res$K <- K
   res$J <- J
   res$alpha <- alpha
-  res$alpha_star <- alpha_star
+  res$alpha.star <- alpha.star
   if(sample.size){
     res$power <- power
   }else{
     res$power <- NA
   }
+  
+  res$type <- type
 
   class(res)<-"MAMS"
 

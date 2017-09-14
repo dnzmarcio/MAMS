@@ -2,8 +2,24 @@
 ## 'mams.sim' evaluates 'generalsim' x times and computes average
 ######################################################################
 
-
-mams.sim <- function(nsim=1000,nMat=matrix(c(44,88),nrow=2,ncol=5),u=c(3.068,2.169),l=c(0.000,2.169),pv=rep(0.5,4),ptest=1) { 
+mams.sim <- function(nsim=1000, nMat=matrix(c(44, 88), nrow=2, ncol=5), u=c(3.068, 2.169),
+                     l=c(0.000, 2.169), pv=rep(0.5, 4), deltav=NULL, sd=NULL, ptest=1) { 
+  
+  if(is.numeric(pv) & is.numeric(deltav) & is.numeric(sd)){
+    stop("Specify the effect sizes either via pv or via deltav and sd, and set the other parameters to NULL.")
+  }
+  
+  if(is.numeric(pv)){
+    if(any(pv<0) | any(pv>1)){stop("Treatment effect parameter not within 0 and 1.")}
+    if(length(pv)!=(ncol(nMat) - 1)) stop("Length of pv is not K.")
+  }else{
+    if(is.numeric(deltav) & is.numeric(sd)){
+      if(length(deltav)!=(ncol(nMat) - 1)) stop("Length of deltav is not K.")
+      if(sd<=0){stop("Standard deviation must be positive.")}
+    }else{
+      stop("Specify the effect sizes either via pv or via deltav and sd.")
+    }
+  }
 
 ########################################################################################################
 ## 'generalsim' simulates the trial once. For general number of patients per arm per stage - 
@@ -69,8 +85,6 @@ mams.sim <- function(nsim=1000,nMat=matrix(c(44,88),nrow=2,ncol=5),u=c(3.068,2.1
     return(list(rej=rej,pow=pow,ess=ss,hmat=hmat))
   }
 
-  if(length(pv)!=(ncol(nMat)-1)) stop("Length of pv is not K")
-
   r0 <- nMat[,1]/nMat[1,1]
   if(ncol(nMat)==2){
     R <-  t(t(nMat[,-1]/nMat[1,1]))
@@ -81,9 +95,15 @@ mams.sim <- function(nsim=1000,nMat=matrix(c(44,88),nrow=2,ncol=5),u=c(3.068,2.1
   if(!is.matrix(R) && is.vector(R))  R <- t(as.matrix( nMat[, -1]/nMat[1, 1]))
 
   n <- nMat[1,1]
-  deltas<-sqrt(2)*qnorm(pv)
-  sig<-1
-
+  
+  if(is.numeric(pv)){
+    deltas <- sqrt(2) * qnorm(pv)
+    sig <- 1
+  }else{
+    deltas <- deltav
+    sig <- sd
+  }
+  
   reps<-sapply(rep(n,nsim),sim,l,u,R,r0,deltas,sig)
 
   ### power to reject any of the hypothesis corresponding to the treatments in ptest
@@ -116,11 +136,8 @@ mams.sim <- function(nsim=1000,nMat=matrix(c(44,88),nrow=2,ncol=5),u=c(3.068,2.1
   return(res)
 }
 
-
 #r<-mams.sim(10000,nMat=matrix(c(40,80),nrow=2,ncol=4),c(0,2.058),c(Inf,2.058),pv=c(0.65,0.55,0.55))
 ## type I error on treatment 1
 #mean(r[2,])
 ## type I error overall 
 #mean(r[1,])
-
-

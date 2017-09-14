@@ -7,20 +7,21 @@ importFrom("stats", "dnorm", "pnorm", "qnorm", "rnorm", "uniroot")
 importFrom("methods", "is")
 
 S3method(plot, MAMS)
-S3method(plot, MAMS.step_down)
+S3method(plot, MAMS.stepdown)
 S3method(print, MAMS)
 S3method(print, MAMS.sim)
-S3method(print, MAMS.step_down)
+S3method(print, MAMS.stepdown)
 S3method(summary, MAMS)
 S3method(summary, MAMS.sim)
-S3method(summary, MAMS.step_down)
-
+S3method(summary, MAMS.stepdown)
 
 export(
        mams,
        mams.sim,
        MAMSNews,
        new.bounds,
-       step_down_mams,
-       update_mams
+       ordinal.mams,
+       stepdown.mams,
+       stepdown.update,
+       tite.mams
       )

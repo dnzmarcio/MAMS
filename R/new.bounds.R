@@ -1,4 +1,4 @@
-new.bounds <- function(K=3, J=2, alpha=0.05, nMat=matrix(c(10,20),nrow=2,ncol=4), u=NULL, l=NULL, u.shape="obf", l.shape="fixed", lfix=0, ufix=NULL, N=20){
+new.bounds <- function(K=3, J=2, alpha=0.05, nMat=matrix(c(10,20), nrow=2, ncol=4), u=NULL, l=NULL, ushape="obf", lshape="fixed", ufix=NULL, lfix=0, N=20){
 
 
   #require(mvtnorm) ## the function pmvnorm is required to evaluate multivariate normal probabilities
@@ -51,7 +51,7 @@ new.bounds <- function(K=3, J=2, alpha=0.05, nMat=matrix(c(10,20),nrow=2,ncol=4)
   ##  The midpoint rule is used with a range of -6 to 6 in each dimension. 
   #############################################################################################################
 
-  typeI<-function(C,alpha,N,R,r0,r0diff,J,K,Sigma,u,l,u.shape,l.shape,lfix=NULL,ufix=NULL){
+  typeI<-function(C,alpha,N,R,r0,r0diff,J,K,Sigma,u,l,ushape,lshape,lfix=NULL,ufix=NULL){
 
     ## number of stages already done
     if(!is.null(l)){
@@ -68,39 +68,39 @@ new.bounds <- function(K=3, J=2, alpha=0.05, nMat=matrix(c(10,20),nrow=2,ncol=4)
     }else{
       ind <- (j+1):J
     }
-    if(!is.function(u.shape)){
-      if (u.shape=='obf'){
+    if(!is.function(ushape)){
+      if (ushape=='obf'){
         ub<-c(u,C*sqrt(J/(1:J))[ind])
       }
-      else if (u.shape=='pocock'){
+      else if (ushape=='pocock'){
         ub<-c(u,rep(C,Jleft))
       }
-      else if (u.shape=='fixed'){
+      else if (ushape=='fixed'){
         ub<-c(u,rep(ufix,Jleft-1),C)
       } 
-      else if (u.shape=='triangular') {
+      else if (ushape=='triangular') {
         #ub<-c(u,C*(1+(1:J)/J)/sqrt(1:J)[(j+1):J])
         ub<-c(u,(C*(1+(1:J)/J)/sqrt(1:J))[ind])
       }
     }else{
-      ub <- c(u,C*u.shape(J)[(j+1):J])
+      ub <- c(u,C*ushape(J)[(j+1):J])
     }
 
-    if(!is.function(l.shape)){
-      if (l.shape=='obf'){
+    if(!is.function(lshape)){
+      if (lshape=='obf'){
         lb<- c(l,-C*sqrt(J/(1:(J-1)))[(j+1):(J-1)],ub[J])
       }
-      else if (l.shape=='pocock'){
+      else if (lshape=='pocock'){
         lb<-c(l,rep(-C,Jleft-1),ub[J])
       }
-      else if (l.shape=='fixed'){
+      else if (lshape=='fixed'){
         lb<-c(l,rep(lfix,Jleft-1),ub[J])
-      } else if (l.shape=='triangular') {
+      } else if (lshape=='triangular') {
         #lb<-c(l,-C*(1-3*(1:J)/J)/sqrt(1:J)[(j+1):J])
         lb<-c(l,(-C*(1-3*(1:J)/J)/sqrt(1:J))[ind])
       }
     }else{
-      lb <- c(l,C*l.shape(J)[(j+1):(J-1)],ub[J])
+      lb <- c(l,C*lshape(J)[(j+1):(J-1)],ub[J])
     }
 
     mmp<-mesh((1:N-.5)/N*12-6,J,rep(12/N,N))
@@ -118,18 +118,18 @@ new.bounds <- function(K=3, J=2, alpha=0.05, nMat=matrix(c(10,20),nrow=2,ncol=4)
   if(N>3 & N<=10){warning("Number of points for integration by quadrature is small which may result in inaccurate solutions.")}
   if(alpha<0 | alpha>1){stop("Error rate not between 0 and 1.")}
 
-  if(!is.function(u.shape)){
-    if(!u.shape%in%c("pocock","obf","triangular","fixed")){stop("Upper boundary does not match the available options")}
-    if(u.shape=="fixed" & is.null(ufix)){stop("ufix required when using a fixed upper boundary shape.")}
+  if(!is.function(ushape)){
+    if(!ushape%in%c("pocock","obf","triangular","fixed")){stop("Upper boundary does not match the available options")}
+    if(ushape=="fixed" & is.null(ufix)){stop("ufix required when using a fixed upper boundary shape.")}
   }else{
-    b <- u.shape(J)
+    b <- ushape(J)
     if(!all(sort(b,decreasing=TRUE)==b)){stop("Upper boundary shape is increasing")}
   }
-  if(!is.function(l.shape)){
-   if(!l.shape%in%c("pocock","obf","triangular","fixed")){stop("Lower boundary does not match the available options")}
-   if(l.shape=="fixed" & is.null(lfix)){stop("lfix required when using a fixed lower boundary shape.")}
+  if(!is.function(lshape)){
+   if(!lshape%in%c("pocock","obf","triangular","fixed")){stop("Lower boundary does not match the available options")}
+   if(lshape=="fixed" & is.null(lfix)){stop("lfix required when using a fixed lower boundary shape.")}
   }else{
-    b <- l.shape(J)
+    b <- lshape(J)
     if(!all(sort(b,decreasing=FALSE)==b)){stop("Lower boundary shape is decreasing")}
   }
   
@@ -169,7 +169,7 @@ new.bounds <- function(K=3, J=2, alpha=0.05, nMat=matrix(c(10,20),nrow=2,ncol=4)
   ################################
 
   uJ <- NULL
-  try(uJ<-uniroot(typeI,c(0,5),alpha=alpha,N=N,R=R,r0=r0,r0diff=r0diff,J=J,K=K,Sigma=Sigma,u=u,l=l,u.shape=u.shape,l.shape=l.shape,lfix=lfix,ufix=ufix,tol=0.001)$root,silent=TRUE) 
+  try(uJ<-uniroot(typeI,c(0,5),alpha=alpha,N=N,R=R,r0=r0,r0diff=r0diff,J=J,K=K,Sigma=Sigma,u=u,l=l,ushape=ushape,lshape=lshape,lfix=lfix,ufix=ufix,tol=0.001)$root,silent=TRUE) 
  
   if(is.null(uJ)) {
     stop("No solution found")
@@ -194,49 +194,49 @@ new.bounds <- function(K=3, J=2, alpha=0.05, nMat=matrix(c(10,20),nrow=2,ncol=4)
   ## the form of the boundary constraints are determined as functions of C. 
   ######################################################################## 
 
-  if(!is.function(u.shape)){
-    if (u.shape=='obf'){
+  if(!is.function(ushape)){
+    if (ushape=='obf'){
       ub<-c(u,uJ*sqrt(J/(1:J))[ind])
     }
-    else if (u.shape=='pocock'){
+    else if (ushape=='pocock'){
       ub<-c(u,rep(uJ,Jleft))
     }
-    else if (u.shape=='fixed'){
+    else if (ushape=='fixed'){
       ub<-c(u,rep(ufix,Jleft),uJ)
     } 
-    else if (u.shape=='triangular') {
+    else if (ushape=='triangular') {
       ub<-c(u,(uJ*(1+(1:J)/J)/sqrt(1:J))[ind])
     }
   }else{
-    ub <- c(u,uJ*u.shape(J)[(j+1):J])
+    ub <- c(u,uJ*ushape(J)[(j+1):J])
   }
 
-  if(!is.function(l.shape)){
-    if (l.shape=='obf'){
+  if(!is.function(lshape)){
+    if (lshape=='obf'){
       lb<- c(l,-uJ*sqrt(J/(1:(J-1)))[(j+1):(J-1)],ub[J])
     }
-    else if (l.shape=='pocock'){
+    else if (lshape=='pocock'){
       lb<-c(l,rep(-uJ,Jleft-1),ub[J])
     }
-    else if (l.shape=='fixed'){
+    else if (lshape=='fixed'){
       lb<-c(l,rep(lfix,Jleft-1),ub[J])
-    } else if (l.shape=='triangular') {
+    } else if (lshape=='triangular') {
       lb<-c(l,(-uJ*(1-3*(1:J)/J)/sqrt(1:J))[ind])
     }
   }else{
-    lb <- c(l,uJ*l.shape(J)[(j+1):(J-1)],ub[J])
+    lb <- c(l,uJ*lshape(J)[(j+1):(J-1)],ub[J])
   }
 
 
 
   #########################################################
-  ## Find alpha_star
+  ## Find alpha.star
   #########################################################
-  alpha_star <- numeric(J)
-  alpha_star[1] <- typeI(ub[1], alpha = 0, N = N, R = t(as.matrix(R[1,])), r0 = r0[1], r0diff = r0diff[1], J = 1, K = K, Sigma = Sigma, u = NULL, l = NULL, u.shape = "fixed", l.shape = "fixed", lfix = NULL, ufix = NULL)
+  alpha.star <- numeric(J)
+  alpha.star[1] <- typeI(ub[1], alpha = 0, N = N, R = t(as.matrix(R[1,])), r0 = r0[1], r0diff = r0diff[1], J = 1, K = K, Sigma = Sigma, u = NULL, l = NULL, ushape = "fixed", lshape = "fixed", lfix = NULL, ufix = NULL)
   if (J > 1){
       for (j in 2:J){
-          alpha_star[j] <- typeI(ub[j], alpha = 0, N = N, R = R[1:j,], r0 = r0[1:j], r0diff = r0diff[1:j], J = j, K = K, Sigma = Sigma, u = NULL, l = NULL, u.shape = "fixed", l.shape = "fixed", lfix = lb[1:(j - 1)], ufix = ub[1:(j - 1)])
+          alpha.star[j] <- typeI(ub[j], alpha = 0, N = N, R = R[1:j,], r0 = r0[1:j], r0diff = r0diff[1:j], J = j, K = K, Sigma = Sigma, u = NULL, l = NULL, ushape = "fixed", lshape = "fixed", lfix = lb[1:(j - 1)], ufix = ub[1:(j - 1)])
       }
   }
 
@@ -252,7 +252,7 @@ new.bounds <- function(K=3, J=2, alpha=0.05, nMat=matrix(c(10,20),nrow=2,ncol=4)
   res$K <- K
   res$J <- J
   res$alpha <- alpha
-  res$alpha_star <- alpha_star
+  res$alpha.star <- alpha.star
   res$power <- NA
 
   
