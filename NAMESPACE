@@ -5,6 +5,10 @@ importFrom("graphics", "axis", "legend", "lines", "matplot",
              "matpoints", "mtext", "points")
 importFrom("stats", "dnorm", "pnorm", "qnorm", "rnorm", "uniroot")
 importFrom("methods", "is")
+importFrom("iterators", "iter")
+importFrom("foreach", "foreach", "%dopar%", "%do%")
+importFrom("doParallel", "registerDoParallel")
+importFrom("parallel", "makeCluster")
 
 S3method(plot, MAMS)
 S3method(plot, MAMS.stepdown)
