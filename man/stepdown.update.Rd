@@ -40,11 +40,14 @@ An object of the class MAMS.stepdown containing the following components: \cr
 }
 
 \references{
+Jaki T, Pallmann P and Magirr D (2019). "The R Package MAMS for Designing Multi-Arm Multi-Stage Clinical Trials." Journal of Statistical Software, 88(4), pp. 1-25. doi: 10.18637/jss.v088.i04
+(URL: http://doi.org/10.18637/jss.v088.i04)
+
 Magirr D, Jaki T, Whitehead J (2012) A generalized Dunnett test for multi-arm multi-stage clinical studies with treatment selection. Biometrika, 99(2), 494-501.\cr
 
-Stallard N, Todd S (2003) Sequential designs for phase III clinical trials incorporating treatment selection. Statistics in Medicine, 22(5), 689-703.\cr
-
 Magirr D, Stallard N, Jaki T (2014) Flexible sequential designs for multi-arm clinical trials. Statistics in Medicine, 33(19), 3269-3279. 
+
+Stallard N, Todd S (2003) Sequential designs for phase III clinical trials incorporating treatment selection. Statistics in Medicine, 22(5), 689-703.\cr
 }
 
 \author{Dominic Magirr}
