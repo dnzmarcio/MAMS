@@ -34,7 +34,7 @@ mams.sim <- function(nsim=1000, nMat=matrix(c(44, 88), nrow=2, ncol=5), u=c(3.06
   sim <- function(n,l,u,R,r0,delta,sig){
     J<-dim(R)[1]
     K<-dim(R)[2]
-    Rdiff<-R-rbind(0,R[-J,])
+    Rdiff<-R-rbind(0,R[-J, ,drop = FALSE])
     r0diff<-r0-c(0,r0[-J])
 
     ##############################################################################
