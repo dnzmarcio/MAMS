@@ -334,7 +334,11 @@ mams <- function(K=4, J=2, alpha=0.05, power=0.9, r=1:2, r0=1:2, p=0.75, p0=0.5,
     }
     rho <- r / (r + r0)
     corr <- matrix(rho, K, K) + diag(1 - rho, K)
-    quan <- qmvnorm(1-alpha, mean=rep(0, K), corr=corr)$quantile
+    if (K==1){
+      quan <- qmvnorm(1-alpha, mean=rep(0, K), sigma=1)$quantile
+    } else {
+      quan <- qmvnorm(1-alpha, mean=rep(0, K), corr=corr)$quantile
+    }
     n <- ((quan + qnorm(power)) / (qnorm(p)*sqrt(2)))^2 *(1+1/r)
 
   }else{
@@ -366,13 +370,15 @@ mams <- function(K=4, J=2, alpha=0.05, power=0.9, r=1:2, r0=1:2, p=0.75, p0=0.5,
                        K=K, delta=delta, delta0=delta0, sig=sig, Sigma=Sigma) < 0)
       }
       
-      if((n - 1)==nstop){warning("The sample size was limited by nstop.")}
+      if((n - 1)==nstop){warning("The sample size search was stopped because the maximum sample size (nstop, default: 3 times the fixed sample size) was reached.")}
       
     }else{
       n <- NULL
     }
   }
 
+  if (n==nstop) warning("Sample size search stopped due to nstop being reached")
+  
   res <- NULL
   res$l <- l  
   res$u <- u
