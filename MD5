@@ -1,8 +1,8 @@
-f5e6bff7c7b7b300f915343964df9e8d *DESCRIPTION
+273af7615fff91c02bd4ded4db41bcaf *DESCRIPTION
 93900b380638ca132baa28bf6ec54a85 *NAMESPACE
 2f30db1d7936248863a1b19a5f4715bc *R/generics.R
 b0a4e6a6752c9f3ae14ea0d91abf6553 *R/internal.R
-d3bb4e61d0d216ecf0f58d21307beb98 *R/mams.R
+3bb92f60166e4eb26d3a972a44b653e3 *R/mams.R
 e2e7e6087e034a3b46a527cb94cca0cf *R/mams.sim.R
 e767c05d40088c66223ec99a46936a37 *R/new.bounds.R
 81b03088ca3815b2b0c6cd2ffb565dbd *R/ordinal.mams.R
@@ -10,7 +10,7 @@ e767c05d40088c66223ec99a46936a37 *R/new.bounds.R
 3bd59d9f0d2afa92ca5ecbdcba615966 *R/stepdown.update.R
 a5d828e35c5292d4e427c76de8b22c1f *R/tite.mams.R
 cfd8b9c5e47da0312fb253f74584a0ab *inst/CITATION
-4390d299211747e8d486bd49ac8a6735 *inst/NEWS
+fa39250a2b5b2042b75553049398dc59 *inst/NEWS
 696e357f4f98c398038ab73317e72ad0 *man/MAMS.News.Rd
 62f9190ed667fbffb296f5443672572a *man/generic.Rd
 1fa5f5627a3a541a3cd03b3ef6e73d49 *man/mams.Rd

@@ -18,6 +18,11 @@ Question or suggestions about the package can be sent to
    jaki.thomas@gmail.com
 
 --------------------CHANGE LOG--------------------------------------------
+Version 1.4.1
+
+  o Minor bug fix
+
+--------------------------------------------------------------------------
 Version 1.4
 
   o Adjusted code to also provide answers for K=1 and J=1

@@ -377,7 +377,11 @@ mams <- function(K=4, J=2, alpha=0.05, power=0.9, r=1:2, r0=1:2, p=0.75, p0=0.5,
     }
   }
 
-  if (n==nstop) warning("Sample size search stopped due to nstop being reached")
+  if(sample.size){
+    if (n==nstop) {
+      warning("Sample size search stopped due to nstop being reached")
+    }
+  }
   
   res <- NULL
   res$l <- l  
