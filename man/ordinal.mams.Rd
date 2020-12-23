@@ -55,9 +55,15 @@ An object of the class MAMS containing the following components:\cr
 }
 
 \references{
-Magirr D, Jaki T, Whitehead J (2012) A generalized Dunnett test for multi-arm multi-stage clinical studies with treatment selection. Biometrika, 99(2), 494-501.\cr
-
 Jaki T, Magirr D (2013) Considerations on covariates and endpoints in multi-arm multi-stage clinical trials selecting all promising treatments. Statistics in Medicine, 32(7), 1150-1163.\cr
+
+Jaki T, Pallmann P and Magirr D (2019). "The R Package MAMS for Designing Multi-Arm Multi-Stage Clinical Trials."" Journal of Statistical Software, 88(4), pp. 1-25. doi: 10.18637/jss.v088.i04
+(URL: http://doi.org/10.18637/jss.v088.i04)
+
+Magirr D, Stallard N, Jaki T. (2014) Flexible sequential designs for multi-arm clinical
+trials. Statistics in Medicine. 33(19):3269-3279.
+
+Magirr D, Jaki T, Whitehead J (2012) A generalized Dunnett test for multi-arm multi-stage clinical studies with treatment selection. Biometrika, 99(2), 494-501.\cr
 
 Whitehead J, Jaki T (2009) One- and two-stage design proposals for a phase II trial comparing three active treatments with control using an ordered categorical endpoint. Statistics in Medicine, 28(5), 828-847.
 }

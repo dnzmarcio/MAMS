@@ -7,11 +7,35 @@ Magirr D, Jaki T, Whitehead J (2012) A generalized Dunnett Test for
 Multi-arm Multi-stage Clinical Studies with Treatment Selection. 
 Biometrika. 99(2):494-501.
 
+and
+
+Jaki T, Pallmann PS, Magirr D (2019) The R package MAMS for designing 
+multi-arm multi-stage clinical trials. Journal of Statistical 
+Software. 31(88):4.
+
 Question or suggestions about the package can be sent to
 
    jaki.thomas@gmail.com
 
 --------------------CHANGE LOG--------------------------------------------
+Version 1.4.1
+
+  o Minor bug fix
+
+--------------------------------------------------------------------------
+Version 1.4
+
+  o Adjusted code to also provide answers for K=1 and J=1
+  o Fixed an error in tite.mams
+  o added warning to show that sample size search stopped due to
+    maximum reached
+
+--------------------------------------------------------------------------
+Version 1.3
+
+  o References updated
+
+--------------------------------------------------------------------------
 Version 1.2
 
   o New function 'ordinal.mams' for ordinal and binary endpoints

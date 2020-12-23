@@ -1,15 +1,19 @@
-citHeader("To cite package MAMS in publications use:")
+bibentry(bibtype = "Article",
+  title        = "The {R} Package {MAMS} for Designing Multi-Arm Multi-Stage Clinical Trials",
+  author       = c(person(given = "Thomas",
+                          family = "Jaki",
+                          email = "jaki.thomas@gmail.com"),
+                   person(given = "Philip",
+                          family = "Pallmann"),
+                   person(given = "Dominic",
+                          family = "Magirr")),
+  journal      = "Journal of Statistical Software",
+  year         = "2019",
+  volume       = "88",
+  number       = "4",
+  pages        = "1--25",
+  doi          = "10.18637/jss.v088.i04",
 
-citEntry(entry="Article",
-         title = "A generalized Dunnett test for multi-arm multi-stage clinical studies with treatment selection",
-         author = personList(person(given="Dominic", family="Magirr"), person(given="Thomas", family="Jaki"),
-			person(given="John", family="Whitehead")),
-         year = "2012",
-         journal = "Biometrika",
-         volume = "99",
-         number = "2",
-         pages = "494-501",
-         url = "https://CRAN.R-project.org/package=MAMS",         
-         textVersion = paste("Magirr D, Jaki T, Whitehead J (2012) A generalized Dunnett Test for Multiarm-Multistage Clinical Studies with Treatment Selection. Biometrika. 99(2):494-501.")
-         )
+  header       = "To cite MAMS in publications use:"
+)
 

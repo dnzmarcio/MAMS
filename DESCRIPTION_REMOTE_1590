@@ -7,7 +7,6 @@ Maintainer: Thomas Jaki <jaki.thomas@gmail.com>
 Depends: mvtnorm, methods
 Description: Designing multi-arm multi-stage studies with (asymptotically) normal endpoints and known variance.
 License: GPL-2
-Date: 2017-09-13
 NeedsCompilation: no
 Packaged: 2020-11-19 15:19:13 UTC; jack
 Repository: CRAN

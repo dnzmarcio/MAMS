@@ -1,9 +1,6 @@
-mams <- function(K=4, J=2, alpha=0.05, power=0.9, 
-                 r=1:2, r0=1:2, p=0.75, p0=0.5, 
-                 delta=NULL, delta0=NULL, sd=NULL,
-                 ushape="obf", lshape="fixed", ufix=NULL, lfix=0, 
-                 nstart=1, nstop=NULL, sample.size=TRUE, N=20,
-                 type="normal", parallel = FALSE, ncores = NULL){
+mams <- function(K=4, J=2, alpha=0.05, power=0.9, r=1:2, r0=1:2, p=0.75, p0=0.5, delta=NULL, delta0=NULL, sd=NULL,
+                 ushape="obf", lshape="fixed", ufix=NULL, lfix=0, nstart=1, nstop=NULL, sample.size=TRUE, N=20,
+                 type="normal"){
 
   #require(mvtnorm) ## the function pmvnorm is required to evaluate multivariate normal probabilities
 
@@ -12,13 +9,6 @@ mams <- function(K=4, J=2, alpha=0.05, power=0.9,
   ## you provide one-dimensional set of points (x) and weights (w) (e.g. midpoint rule, gaussian quadrature, etc)
   ## and the number of dimensions (d) and it gives d-dimensional collection of points and weights
   ###############################################################################################
-  
-  apply_parallel <- function(newX, FUN, d2, d.call, ...) {
-    # Modified from foreach vignnete - Steve Weston
-    foreach(x = iter(newX, chunksize = d2), .combine = 'c', .packages = 'foreach') %dopar% {
-      foreach(i=1:nrow(x)) %do% FUN(array(x[i,], d.call), ...)
-    }
-  }
 
   mesh<-function(x,d,w=1/length(x)+x*0){
     n<-length(x)
@@ -60,8 +50,7 @@ mams <- function(K=4, J=2, alpha=0.05, power=0.9,
   ##  The midpoint rule is used with a range of -6 to 6 in each dimension. 
   #############################################################################################################
 
-  typeI<-function(C,alpha,N,r,r0,r0diff,J,K,Sigma,ushape,lshape,lfix=NULL,ufix=NULL, 
-                  parallel, ncores){
+  typeI<-function(C,alpha,N,r,r0,r0diff,J,K,Sigma,ushape,lshape,lfix=NULL,ufix=NULL){
 
     ########################################################################
     ## the form of the boundary constraints are determined as functions of C. 
@@ -105,17 +94,7 @@ mams <- function(K=4, J=2, alpha=0.05, power=0.9,
 
 
     mmp<-mesh((1:N-.5)/N*12-6,J,rep(12/N,N))
-
-    if (!parallel){
-      evs <- apply(mmp$X,1,prodsum,l=l,u=u,r=r,r0=r0,r0diff=r0diff,J=J,K=K,Sigma=Sigma)
-    } else {
-      evs <- 
-        apply_parallel(mmp$X, prodsum, d2 = ceiling(nrow(mmp$X)/ncores), 
-                       d.call = ncol(mmp$X),
-                       l=l,u=u,r=r,r0=r0,r0diff=r0diff,J=J,K=K,Sigma=Sigma)
-      evs <- unlist(evs)
-    }
-    
+    evs<-apply(mmp$X,1,prodsum,l=l,u=u,r=r,r0=r0,r0diff=r0diff,J=J,K=K,Sigma=Sigma)
     truealpha<-1-mmp$w%*%evs
     return(truealpha-alpha)
   }
@@ -175,21 +154,10 @@ mams <- function(K=4, J=2, alpha=0.05, power=0.9,
   ##  The midpoint rule is used with a range of -6 to 6 in each dimension. 
   ########################################################################################################
 
-  typeII<-function(n,beta,l,u,N,r,r0,r0diff,J,K,delta,delta0,sig,Sigma, 
-                   parallel, ncores){
+  typeII<-function(n,beta,l,u,N,r,r0,r0diff,J,K,delta,delta0,sig,Sigma){
   
     mmp<-mesh((1:N-.5)/N*12-6,1,rep(12/N,N))
-    if (!parallel){
-      evs <- apply(mmp$X, 1, prodsum2,
-                   r=r, r0=r0,l=l,u=u,K=K,delta=delta,delta0=delta0,n=n,sig=sig)
-    } else {
-      evs <- 
-        apply_parallel(newX = mmp$X, FUN = prodsum2, d2 = 
-                         ceiling(nrow(mmp$X)/ncores), d.call = ncol(mmp$X),
-                       r = r, r0=r0,l=l,u=u,K=K,delta=delta,delta0=delta0,n=n,sig=sig)
-      evs <- unlist(evs)
-    }
- 
+    evs<-apply(mmp$X,1,prodsum2,r=r,r0=r0,l=l,u=u,K=K,delta=delta,delta0=delta0,n=n,sig=sig)
     pi<-mmp$w%*%evs
 
     if(J>1){
@@ -197,20 +165,7 @@ mams <- function(K=4, J=2, alpha=0.05, power=0.9,
         A<-diag(sqrt(r[j]/(r[j]-r[1:(j-1)])),ncol=j-1)
         SigmaJ<-A%*%(Sigma[1:(j-1),1:(j-1)]-Sigma[1:(j-1),j]%*%t(Sigma[1:(j-1),j]))%*%A
         mmp<-mesh((1:N-.5)/N*12-6,j,rep(12/N,N))
-        
-        if (!parallel){
-          evs <- apply(mmp$X, 1, prodsum3,
-                       l=l,u=u,r=r,r0=r0,r0diff=r0diff,J=j,K=K,
-                       delta=delta,delta0=delta0,n=n,sig=sig,Sigma=Sigma[1:j,1:j],SigmaJ=SigmaJ)
-        } else {
-          evs <- 
-            apply_parallel(newX = mmp$X, FUN = prodsum3, d2 = 
-                             ceiling(nrow(mmp$X)/ncores), d.call = ncol(mmp$X),
-                           l=l,u=u,r=r,r0=r0,r0diff=r0diff,J=j,K=K,
-                           delta=delta,delta0=delta0,n=n,sig=sig,Sigma=Sigma[1:j,1:j],SigmaJ=SigmaJ)
-          evs <- unlist(evs)
-        }
-        
+        evs<-apply(mmp$X,1,prodsum3,l=l,u=u,r=r,r0=r0,r0diff=r0diff,J=j,K=K,delta=delta,delta0=delta0,n=n,sig=sig,Sigma=Sigma[1:j,1:j],SigmaJ=SigmaJ)
         pi<-pi+mmp$w%*%evs
       }
     }
@@ -259,15 +214,6 @@ mams <- function(K=4, J=2, alpha=0.05, power=0.9,
   }else{
     b <- lshape(J)
     if(!all(sort(b,decreasing=FALSE)==b)){stop("Lower boundary shape is decreasing.")}
-  }
-
-  if (parallel){
-    if (is.null(ncores)) {
-      stop("Number of cores are required for 'parallel = TRUE'.")
-    } else {
-      cl <- makeCluster(ncores)
-      registerDoParallel(cl)
-    }
   }
  
   ############################################################################
@@ -324,10 +270,7 @@ mams <- function(K=4, J=2, alpha=0.05, power=0.9,
   
   uJ<-NULL
   ## making sure that lfix is not larger then uJ
-  try(uJ<-uniroot(typeI,c(qnorm(1-alpha)/2,5),
-                  alpha=alpha,N=N,r=r,r0=r0,r0diff=r0diff,J=J,K=K,Sigma=Sigma,
-                  ushape=ushape,lshape=lshape,lfix=lfix,ufix=ufix,tol=0.001,
-                  parallel = parallel, ncores = ncores)$root, silent=TRUE)
+  try(uJ<-uniroot(typeI,c(qnorm(1-alpha)/2,5),alpha=alpha,N=N,r=r,r0=r0,r0diff=r0diff,J=J,K=K,Sigma=Sigma,ushape=ushape,lshape=lshape,lfix=lfix,ufix=ufix,tol=0.001)$root, silent=TRUE)
   #if(is.null(uJ)){stop("Lower boundary (lfix) is too large.")}
   if(is.null(uJ)){stop("No boundaries can be found.")}
 
@@ -371,19 +314,10 @@ mams <- function(K=4, J=2, alpha=0.05, power=0.9,
   ## Find alpha.star
   #########################################################
   alpha.star <- numeric(J)
-  alpha.star[1] <- 
-    typeI(u[1], alpha = 0, N = N, r = r[1], r0 = r0[1], r0diff = r0diff[1], J = 1,
-          K = K, Sigma = Sigma, 
-          ushape = "fixed", lshape = "fixed", lfix = NULL, ufix = NULL,
-          parallel = parallel, ncores = ncores)
+  alpha.star[1] <- typeI(u[1], alpha = 0, N = N, r = r[1], r0 = r0[1], r0diff = r0diff[1], J = 1, K = K, Sigma = Sigma, ushape = "fixed", lshape = "fixed", lfix = NULL, ufix = NULL)
   if (J > 1){
       for (j in 2:J){
-          alpha.star[j] <- 
-            typeI(u[j], alpha = 0, N = N, r = r[1:j], r0 = r0[1:j], 
-                  r0diff = r0diff[1:j], J = j, K = K, Sigma = Sigma, 
-                  ushape = "fixed", lshape = "fixed", 
-                  lfix = l[1:(j - 1)], ufix = u[1:(j - 1)],
-                  parallel = parallel, ncores = ncores)
+          alpha.star[j] <- typeI(u[j], alpha = 0, N = N, r = r[1:j], r0 = r0[1:j], r0diff = r0diff[1:j], J = j, K = K, Sigma = Sigma, ushape = "fixed", lshape = "fixed", lfix = l[1:(j - 1)], ufix = u[1:(j - 1)])
       }
   }
 
@@ -400,11 +334,7 @@ mams <- function(K=4, J=2, alpha=0.05, power=0.9,
     }
     rho <- r / (r + r0)
     corr <- matrix(rho, K, K) + diag(1 - rho, K)
-    if (K==1){
-      quan <- qmvnorm(1-alpha, mean=rep(0, K), sigma=1)$quantile
-    } else {
-      quan <- qmvnorm(1-alpha, mean=rep(0, K), corr=corr)$quantile
-    }
+    quan <- qmvnorm(1-alpha, mean=rep(0, K), corr=corr)$quantile
     n <- ((quan + qnorm(power)) / (qnorm(p)*sqrt(2)))^2 *(1+1/r)
 
   }else{
@@ -425,8 +355,7 @@ mams <- function(K=4, J=2, alpha=0.05, power=0.9,
         while (po==0){
           nx <- nx + 1
           po <- (typeII(nx, beta=1 - power, l=l, u=u, N=N, r=r, r0=r0, r0diff=r0diff, J=1,
-                        K=K, delta=delta, delta0=delta0, sig=sig, Sigma=Sigma, 
-                        parallel = parallel, ncores = ncores) < 0)
+                        K=K, delta=delta, delta0=delta0, sig=sig, Sigma=Sigma) < 0)
         }
         nstop <- 3 * nx
       }
@@ -434,23 +363,16 @@ mams <- function(K=4, J=2, alpha=0.05, power=0.9,
       while (pow==0 & n<=nstop){
         n <- n + 1
         pow <- (typeII(n, beta=1 - power, l=l, u=u, N=N, r=r, r0=r0, r0diff=r0diff, J=J,
-                       K=K, delta=delta, delta0=delta0, sig=sig, Sigma=Sigma, 
-                       parallel = parallel, ncores = ncores) < 0)
+                       K=K, delta=delta, delta0=delta0, sig=sig, Sigma=Sigma) < 0)
       }
       
-      if((n - 1)==nstop){warning("The sample size search was stopped because the maximum sample size (nstop, default: 3 times the fixed sample size) was reached.")}
+      if((n - 1)==nstop){warning("The sample size was limited by nstop.")}
       
     }else{
       n <- NULL
     }
   }
 
-  if(sample.size){
-    if (n==nstop) {
-      warning("Sample size search stopped due to nstop being reached")
-    }
-  }
-  
   res <- NULL
   res$l <- l  
   res$u <- u

@@ -67,6 +67,9 @@ An object of the class MAMS containing the following components:\cr
 }
 
 \references{
+Jaki T, Pallmann P and Magirr D (2019). "The R Package MAMS for Designing Multi-Arm Multi-Stage Clinical Trials." Journal of Statistical Software, 88(4), pp. 1-25. doi: 10.18637/jss.v088.i04
+(URL: http://doi.org/10.18637/jss.v088.i04)
+
 Magirr D, Jaki T, Whitehead J (2012) A generalized Dunnett test for multi-arm multi-stage clinical studies with treatment selection. Biometrika, 99(2), 494-501.\cr
 
 Pocock SJ (1977) Group sequential methods in the design and analysis of clinical trials. Biometrika, 64(2), 191-199.\cr
