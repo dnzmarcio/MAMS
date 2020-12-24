@@ -13,6 +13,10 @@ mams <- function(K=4, J=2, alpha=0.05, power=0.9,
   ## and the number of dimensions (d) and it gives d-dimensional collection of points and weights
   ###############################################################################################
   
+  if (parallel)
+    registerDoParallel(ncores)
+  
+  
   apply_parallel <- function(newX, FUN, d2, d.call, ...) {
     # Modified from foreach vignnete - Steve Weston
     foreach(x = iter(newX, chunksize = d2), .combine = 'c', .packages = 'foreach') %dopar% {
@@ -468,6 +472,10 @@ mams <- function(K=4, J=2, alpha=0.05, power=0.9,
   }else{
     res$power <- NA
   }
+  
+  
+  if (parallel)
+    stopImplicitCluster()
   
   res$type <- type
 
